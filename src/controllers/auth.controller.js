@@ -38,19 +38,19 @@ exports.registerUser = ([
 
     // Generate JWT token
     const token = jwt.sign(
-        { randomUserId, email},
+        {randomUserId, email},
         process.env.TOKEN_KEY,
         {
             expiresIn: "2h",
         }
     );
-    await User.create ({
+    await User.create({
         name: name,
-        surname : surname,
-        email : email,
+        surname: surname,
+        email: email,
         password: password,
         role: role
-    }).then(() =>{
+    }).then(() => {
         const body = {
             Operation: 'SAVE',
             Message: 'SUCCESS',
@@ -59,34 +59,67 @@ exports.registerUser = ([
             expiresIn: '2h'
         }
         res.json(body);
-    }, error =>{
+    }, error => {
         error.message = 'Username must be unique, try another';
         console.error('Do your custom error handling here. I am just ganna log it out: ', error);
         res.status(500).send(error);
     })
 });
-/*
 
 
 exports.loginUser = ([
-    check('Username', 'Username is required').notEmpty(),
+    check('Email', 'Email is required').notEmpty(),
     check('password', 'Password is required').notEmpty(),
 ], async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    let {Username, password} = req.body;
+    let {email, password} = req.body;
 
 
-    const params = {
-        TableName: dynamodbTableName,
-        Key: {
-            'Username': Username
-        },
-        ConditionExpression: 'attribute_exists(Username)'
-    }
 
+    await User.findOne({email: email}).then(async user => {
+        //user exists
+        const bodyError = {
+            Message: 'User or password incorrect. Please try again',
+        }
+        if(user){
+            if (await bcryptjs.compare(password, user.password)) {
+                // Generate JWT token
+                console.log("User logged:" + user._id);
+                const token = jwt.sign(
+                    {_id: user._id, email: user.email},
+                    process.env.TOKEN_KEY,
+                    {
+                        expiresIn: "2h",
+                    }
+                );
+
+                const body = {
+                    Operations: 'GET',
+                    Status: 'true',
+                    Message: 'User logged in',
+                    Token: token,
+                    expiresIn: '2h'
+                }
+                res.json(body);
+
+            } else {
+                res.json(bodyError);
+            }
+        }else{
+
+            res.json(bodyError);
+        }
+
+
+    }, error => {
+        //user not exists
+        res.status(500).json(error);
+    })
+});
+/*
     await dynamodb.get(params).promise().then(async response => {
         res.status(200);
         //res.json(response.Item);

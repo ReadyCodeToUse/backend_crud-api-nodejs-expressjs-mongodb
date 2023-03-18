@@ -1,0 +1,27 @@
+
+const {check, validationResult} = require("express-validator");
+
+//const env = process.env.NODE_ENV || "prod";
+
+
+const {User} = require('../models/User.model');
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Register User
+ * @route           POST /auth/register
+ * @access          Public
+ */
+exports.getAllUsers = ([
+
+], async (req, res, next) => {
+
+    //encrypt password
+    User.find().then(user => {
+        res.json(user);
+    })
+
+
+});
