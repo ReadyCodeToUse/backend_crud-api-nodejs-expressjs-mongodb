@@ -14,8 +14,8 @@ app.use(time.init)
 app.use(express.json());
 
 
-const authRouter = require('./routes/auth');
-const userRouter = require('./routes/user');
+const authRouter = require('./routes/auth.route');
+const userRouter = require('./routes/user.route');
 
 
 const auth = require('./middleware/auth');
