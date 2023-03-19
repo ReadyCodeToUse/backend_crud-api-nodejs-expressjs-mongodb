@@ -10,11 +10,11 @@ const verifyToken = (req, res, next) => {
     if (!token) {
 
         const body = {
-            Timestamp: moment.tz("Europe/Rome").format(),
-            Path: req.originalUrl,
-            Method: req.method,
-            Status: 403,
-            Message: 'A token is required for authentication'
+            timestamp: moment.tz("Europe/Rome").format(),
+            path: req.originalUrl,
+            method: req.method,
+            status: 403,
+            message: 'A token is required for authentication'
         }
         return res.status(403).json(body);
         //return res.status(403).send("test");
@@ -22,7 +22,14 @@ const verifyToken = (req, res, next) => {
     try {
         req.user = jwt.verify(token, config.TOKEN_KEY);
     } catch (err) {
-        return res.status(401).send("Invalid Token");
+        const body = {
+            timestamp: moment.tz("Europe/Rome").format(),
+            path: req.originalUrl,
+            method: req.method,
+            status: 401,
+            message: 'Invalid user token.'
+        }
+        return res.status(401).json(body);
     }
     return next();
 };

@@ -52,10 +52,10 @@ exports.registerUser = ([
         role: role
     }).then(() => {
         const body = {
-            Operation: 'SAVE',
-            Message: 'SUCCESS',
-            Item: req.body,
-            Token: token,
+            operation: 'SAVE',
+            message: 'SUCCESS',
+            item: req.body,
+            token: token,
             expiresIn: '2h'
         }
         res.json(body);
@@ -82,7 +82,7 @@ exports.loginUser = ([
     await User.findOne({email: email}).then(async user => {
         //user exists
         const bodyError = {
-            Message: 'User or password incorrect. Please try again',
+            message: 'User or password incorrect. Please try again',
         }
         if(user){
             if (await bcryptjs.compare(password, user.password)) {
@@ -97,10 +97,10 @@ exports.loginUser = ([
                 );
 
                 const body = {
-                    Operations: 'GET',
-                    Status: 'true',
-                    Message: 'User logged in',
-                    Token: token,
+                    operations: 'GET',
+                    status: 'true',
+                    message: 'User logged in',
+                    token: token,
                     expiresIn: '2h'
                 }
                 res.json(body);

@@ -20,7 +20,16 @@ exports.getAllUsers = ([
 
     //encrypt password
     User.find().then(user => {
-        res.json(user);
+        if(user){
+            res.json(user);
+        }else{
+            const body = {
+                message: "No users found"
+            }
+            res.json(body);
+
+        }
+
     })
 
 
