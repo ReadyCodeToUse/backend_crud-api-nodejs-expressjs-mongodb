@@ -2,6 +2,7 @@ const bcryptjs = require('bcryptjs');
 const crypto = require("crypto");
 const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
+const successRespone = require('../../utils/successResponse');
 //const env = process.env.NODE_ENV || "prod";
 
 
@@ -29,11 +30,8 @@ exports.registerUser = ([
     let {Username, name, surname, email, password, role} = req.body;
 
     //encrypt password
-
     const salt = await bcryptjs.genSalt(10);
     password = await bcryptjs.hash(password, salt);
-
-    console.log(password);
     const randomUserId = crypto.randomBytes(8).toString('hex');
 
     // Generate JWT token
@@ -51,20 +49,18 @@ exports.registerUser = ([
         password: password,
         role: role
     }).then(() => {
-        const body = {
-            operation: 'SAVE',
-            message: 'SUCCESS',
-            item: req.body,
+        const customData = {
             token: token,
             expiresIn: '2h'
         }
-        res.json(body);
+        successRespone(req,res,null,null,customData);
     }, error => {
-        error.message = 'Username must be unique, try another';
-        console.error('Do your custom error handling here. I am just ganna log it out: ', error);
-        res.status(500).send(error);
+        next(error);
+        //res.status(500).json(error);
     })
 });
+
+
 
 
 exports.loginUser = ([
@@ -82,6 +78,7 @@ exports.loginUser = ([
     await User.findOne({email: email}).then(async user => {
         //user exists
         const bodyError = {
+            status: 401,
             message: 'User or password incorrect. Please try again',
         }
         if(user){
@@ -96,26 +93,25 @@ exports.loginUser = ([
                     }
                 );
 
-                const body = {
-                    operations: 'GET',
-                    status: 'true',
-                    message: 'User logged in',
+                const customData = {
+                    responseMessage: 'Success User logged in',
                     token: token,
                     expiresIn: '2h'
                 }
-                res.json(body);
+                successRespone(req,res,null,null, customData)
+                //res.json(body);
 
-            } else {
-                res.json(bodyError);
+            }else{
+                res.status(401).json(bodyError);
             }
         }else{
-
-            res.json(bodyError);
+            res.status(401).json(bodyError);
         }
 
 
     }, error => {
         //user not exists
-        res.status(500).json(error);
+        next(error);
+        //res.status(500).json(error);
     })
 });

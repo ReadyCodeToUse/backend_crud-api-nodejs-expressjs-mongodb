@@ -5,6 +5,7 @@ const {check, validationResult} = require("express-validator");
 
 
 const {User} = require('../models/User.model');
+const errorHandler = require("../middleware/errorHandler");
 
 /**
  * @param req
@@ -24,12 +25,14 @@ exports.getAllUsers = ([
             res.json(user);
         }else{
             const body = {
-                message: "No users found"
+                message: "no user found"
             }
             res.json(body);
 
         }
 
+    }, error => {
+        next(error);
     })
 
 
