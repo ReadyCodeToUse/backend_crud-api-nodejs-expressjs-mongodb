@@ -1,5 +1,47 @@
 
-## API Reference WIP
+# Backend crud api using node.js, express.js, MongodDB
+
+This repo is a boilerplate that help you to start coding a CRUD API using node.js with express.js and mongodb
+
+
+
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/ReadyCodeToUse/backend_crud-api-nodejs-expressjs-mongodb.git
+```
+
+Go to the project directory
+
+```bash
+  cd backend_crud-api-nodejs-expressjs-mongodb
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Run docker
+
+```bash
+  docker compose up
+```
+
+Start the server
+
+```bash
+  npm start
+```
+
+
+
+## API Reference
 
 ### Auth System
 #### Register User
@@ -66,3 +108,4 @@
     }
 }
 ````
+
