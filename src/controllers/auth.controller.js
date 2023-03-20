@@ -2,7 +2,9 @@ const bcryptjs = require('bcryptjs');
 const crypto = require("crypto");
 const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
-const successRespone = require('../../utils/successResponse');
+const successResponse = require('../../utils/successResponse');
+
+const {authLogger} = require ('../../utils/logger');
 //const env = process.env.NODE_ENV || "prod";
 
 
@@ -53,7 +55,8 @@ exports.registerUser = ([
             token: token,
             expiresIn: '2h'
         }
-        successRespone(req,res,null,null,customData);
+        successResponse(req,res,null,null,customData);
+        authLogger.info("test");
     }, error => {
         next(error);
         //res.status(500).json(error);
@@ -98,7 +101,8 @@ exports.loginUser = ([
                     token: token,
                     expiresIn: '2h'
                 }
-                successRespone(req,res,null,null, customData)
+                authLogger.info("test");
+                successResponse(req,res,null,null, customData)
                 //res.json(body);
 
             }else{

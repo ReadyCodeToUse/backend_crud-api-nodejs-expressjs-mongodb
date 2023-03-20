@@ -1,4 +1,5 @@
 const moment = require("moment/moment");
+const {authLogger} = require("../../utils/logger");
 const errorHandler = (err, req, res, next) => {
     console.log('Middleware error handler');
 
@@ -12,7 +13,8 @@ const errorHandler = (err, req, res, next) => {
 
         if(errors.length > 1) {
             const formattedErrors = errors.join(' ');
-            return res.status(code).json({
+
+            const response = {
                 timestamp: moment.tz("Europe/Rome").format(),
                 success: false,
                 path: req.originalUrl,
@@ -20,9 +22,11 @@ const errorHandler = (err, req, res, next) => {
                 status: res.statusCode,
                 fields: fields,
                 message: formattedErrors
-            });
+            }
+            authLogger.error(response);
+            return res.status(code).json(response);
         } else {
-            return res.status(code).json({
+            const response = {
                 timestamp: moment.tz("Europe/Rome").format(),
                 success: false,
                 path: req.originalUrl,
@@ -30,7 +34,9 @@ const errorHandler = (err, req, res, next) => {
                 status: res.statusCode,
                 message: errors,
                 fields: fields
-            })
+            }
+            authLogger.error(response);
+            return res.status(code).json(response);
         }
 
     }
@@ -41,7 +47,7 @@ const errorHandler = (err, req, res, next) => {
     if(err.code && err.code === 11000){
 
         const field = Object.keys(err.keyValue);
-        return res.status(409).json({
+        const response ={
             timestamp: moment.tz("Europe/Rome").format(),
             success: false,
             path: req.originalUrl,
@@ -50,13 +56,16 @@ const errorHandler = (err, req, res, next) => {
             message: `An account with that ${field} already exists.`,
             stack: process.env.NODE_ENV === 'development' ? err.stack : {}
 
-        })
+        }
+        authLogger.error(response);
+        return res.status(409).json(response)
     }
 
     const errStatus = err.statusCode || 500;
     console.log("statusCode: " +err.statusCode);
     const errMsg = err.message || 'Something went wrong';
-    return res.status(errStatus).json({
+
+    const response = {
         timestamp: moment.tz("Europe/Rome").format(),
         success: false,
         path: req.originalUrl,
@@ -64,7 +73,10 @@ const errorHandler = (err, req, res, next) => {
         status: res.statusCode,
         message: errMsg,
         stack: process.env.NODE_ENV === 'development' ? err.stack : {}
-    })
+    }
+
+    authLogger.error(response);
+    return res.status(errStatus).json()
 
 };
 
