@@ -9,14 +9,19 @@
   },
   "author": "Andrea Ioele",
   "dependencies": {
+    "@logtail/node": "^0.2.2",
+    "@logtail/winston": "^0.3.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-timestamp": "^0.1.4",
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
     "mongoose": "^7.0.1",
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "winston": "^3.8.2"
   }
 }

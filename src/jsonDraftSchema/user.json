@@ -1,0 +1,25 @@
+{
+  "_id" : "Object(id)",
+  "name": "String",
+  "surname": "String",
+  "birthDate": "Data",
+  "sex" : ["M","F","N"],
+  "loginData" : {
+    "username": "String",
+    "email": "String",
+    "password" : "String",
+    "isActive" : "Boolean",
+    "role" : ["admin", "user"]
+  },
+  "address" : {
+    "street" : "String",
+    "houseNumber" : "String",
+    "city": "String",
+    "postalCode" : "String",
+    "province" : "String",
+    "state" : "String",
+    "timezone" : "String"
+  },
+  "createdAt" : "timestamp",
+  "updatedAt" : "timestamp"
+}

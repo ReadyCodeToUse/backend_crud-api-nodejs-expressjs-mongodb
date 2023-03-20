@@ -2,6 +2,9 @@ const bcryptjs = require('bcryptjs');
 const crypto = require("crypto");
 const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
+const successResponse = require('../../utils/successResponse');
+
+const {authLogger} = require ('../../utils/logger');
 //const env = process.env.NODE_ENV || "prod";
 
 
@@ -29,107 +32,90 @@ exports.registerUser = ([
     let {Username, name, surname, email, password, role} = req.body;
 
     //encrypt password
-
     const salt = await bcryptjs.genSalt(10);
     password = await bcryptjs.hash(password, salt);
-
-    console.log(password);
     const randomUserId = crypto.randomBytes(8).toString('hex');
 
     // Generate JWT token
     const token = jwt.sign(
-        { randomUserId, email},
+        {randomUserId, email},
         process.env.TOKEN_KEY,
         {
             expiresIn: "2h",
         }
     );
-    await User.create ({
+    await User.create({
         name: name,
-        surname : surname,
-        email : email,
+        surname: surname,
+        email: email,
         password: password,
         role: role
-    }).then(() =>{
-        const body = {
-            Operation: 'SAVE',
-            Message: 'SUCCESS',
-            Item: req.body,
-            Token: token,
+    }).then(() => {
+        const customData = {
+            token: token,
             expiresIn: '2h'
         }
-        res.json(body);
-    }, error =>{
-        error.message = 'Username must be unique, try another';
-        console.error('Do your custom error handling here. I am just ganna log it out: ', error);
-        res.status(500).send(error);
+        successResponse(req,res,null,null,customData);
+        authLogger.info("test");
+    }, error => {
+        next(error);
+        //res.status(500).json(error);
     })
 });
-/*
+
+
 
 
 exports.loginUser = ([
-    check('Username', 'Username is required').notEmpty(),
+    check('Email', 'Email is required').notEmpty(),
     check('password', 'Password is required').notEmpty(),
 ], async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    let {Username, password} = req.body;
+    let {email, password} = req.body;
 
 
-    const params = {
-        TableName: dynamodbTableName,
-        Key: {
-            'Username': Username
-        },
-        ConditionExpression: 'attribute_exists(Username)'
-    }
 
-    await dynamodb.get(params).promise().then(async response => {
-        res.status(200);
-        //res.json(response.Item);
-        if (response.Item == null) {
-            const body = {
-                Operations: 'GET',
-                Status: 'true',
-                Message: 'User or password are wrong, try another',
-                User: null
-            }
-            res.json(body);
-        } else {
-            if (await bcrypt.compare(password, response.Item.password)) {
+    await User.findOne({email: email}).then(async user => {
+        //user exists
+        const bodyError = {
+            status: 401,
+            message: 'User or password incorrect. Please try again',
+        }
+        if(user){
+            if (await bcryptjs.compare(password, user.password)) {
                 // Generate JWT token
+                console.log("User logged:" + user._id);
                 const token = jwt.sign(
-                    { user_id: response.Item.user_id, email: response.Item.email},
+                    {_id: user._id, email: user.email},
                     process.env.TOKEN_KEY,
                     {
                         expiresIn: "2h",
                     }
                 );
 
-                const body = {
-                    Operations: 'GET',
-                    Status: 'true',
-                    Message: 'User logged in',
-                    Token: token
+                const customData = {
+                    responseMessage: 'Success User logged in',
+                    token: token,
+                    expiresIn: '2h'
                 }
-                res.json(body);
+                authLogger.info("test");
+                successResponse(req,res,null,null, customData)
+                //res.json(body);
 
-            } else {
-                res.json("error");
+            }else{
+                res.status(401).json(bodyError);
             }
-
+        }else{
+            res.status(401).json(bodyError);
         }
+
+
     }, error => {
-        error.message = 'There was an error, try later';
-        console.error('Do your custom error handling here. I am just ganna log it out: ', error);
-        res.status(500).send(error);
+        //user not exists
+        next(error);
+        //res.status(500).json(error);
     })
-
-
 });
-
- */
-
