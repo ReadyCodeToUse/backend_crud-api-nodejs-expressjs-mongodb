@@ -57,7 +57,7 @@ exports.registerUser = ([
             expiresIn: '2h'
         }
 
-        successResponse(req,res,null,null,customData);
+        successResponse(req,res,null,'User registered',customData);
         }, error => {
         next(error);
         //res.status(500).json(error);
@@ -99,11 +99,10 @@ exports.loginUser = ([
                 );
 
                 const customData = {
-                    responseMessage: 'Success User logged in',
                     token: token,
                     expiresIn: '2h'
                 }
-                successResponse(req,res,null,null, customData)
+                successResponse(req,res,null,'User logged in', customData)
                 //res.json(body);
 
             }else{

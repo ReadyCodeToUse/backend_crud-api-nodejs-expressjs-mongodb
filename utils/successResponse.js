@@ -1,5 +1,5 @@
 const moment = require('moment');
-const {genericLogger} = require("./logger");
+const {genericLogger, authLogger} = require("./logger");
 const successResponse = (req, res, customStatus, customMessage, customData) => {
 
     const response = {
@@ -10,6 +10,9 @@ const successResponse = (req, res, customStatus, customMessage, customData) => {
         message: customMessage === null ? res.message : customMessage,
         data: customData === null ? {} : customData
     }
+
+    authLogger.info(response);
+
 
     res.status(customStatus === null ? res.statusCode : customStatus).json(response);
 }
