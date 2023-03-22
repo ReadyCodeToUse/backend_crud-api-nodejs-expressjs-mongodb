@@ -22,7 +22,7 @@ const errorHandler = (err, req, res, next) => {
                 success: false,
                 path: req.originalUrl,
                 method: req.method,
-                status: res.statusCode,
+                status: code,
                 fields: fields,
                 message: formattedErrors
             }
@@ -34,9 +34,9 @@ const errorHandler = (err, req, res, next) => {
                 success: false,
                 path: req.originalUrl,
                 method: req.method,
-                status: res.statusCode,
-                message: errors,
-                fields: fields
+                status: code,
+                fields: fields,
+                message: errors
             }
             authLogger.error(response);
             return res.status(code).json(response);
