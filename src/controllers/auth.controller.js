@@ -9,6 +9,7 @@ const {authLogger} = require ('../../utils/logger');
 
 
 const {User} = require('../models/User.model');
+const moment = require("moment/moment");
 
 /**
  * @param req
@@ -55,9 +56,9 @@ exports.registerUser = ([
             token: token,
             expiresIn: '2h'
         }
+
         successResponse(req,res,null,null,customData);
-        authLogger.info("test");
-    }, error => {
+        }, error => {
         next(error);
         //res.status(500).json(error);
     })
@@ -76,11 +77,12 @@ exports.loginUser = ([
     }
     let {email, password} = req.body;
 
-
-
     await User.findOne({email: email}).then(async user => {
         //user exists
         const bodyError = {
+            timestamp: moment.tz("Europe/Rome").format(),
+            method: req.method,
+            path: req.originalUrl,
             status: 401,
             message: 'User or password incorrect. Please try again',
         }
@@ -101,14 +103,15 @@ exports.loginUser = ([
                     token: token,
                     expiresIn: '2h'
                 }
-                authLogger.info("test");
                 successResponse(req,res,null,null, customData)
                 //res.json(body);
 
             }else{
+                authLogger.info(bodyError);
                 res.status(401).json(bodyError);
             }
         }else{
+            authLogger.info(bodyError);
             res.status(401).json(bodyError);
         }
 

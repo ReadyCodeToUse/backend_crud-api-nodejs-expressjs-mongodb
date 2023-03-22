@@ -1,5 +1,8 @@
 const moment = require("moment/moment");
-const {authLogger} = require("../../utils/logger");
+const {
+    authLogger,
+    genericLogger
+} = require("../../utils/logger");
 const errorHandler = (err, req, res, next) => {
     console.log('Middleware error handler');
 
@@ -52,7 +55,7 @@ const errorHandler = (err, req, res, next) => {
             success: false,
             path: req.originalUrl,
             method: req.method,
-            status: res.statusCode,
+            status: 409,
             message: `An account with that ${field} already exists.`,
             stack: process.env.NODE_ENV === 'development' ? err.stack : {}
 
@@ -75,8 +78,9 @@ const errorHandler = (err, req, res, next) => {
         stack: process.env.NODE_ENV === 'development' ? err.stack : {}
     }
 
-    authLogger.error(response);
-    return res.status(errStatus).json()
+    genericLogger.error(response);
+
+    return res.status(errStatus).json(response)
 
 };
 

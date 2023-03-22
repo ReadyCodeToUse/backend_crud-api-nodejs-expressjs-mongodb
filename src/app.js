@@ -5,12 +5,6 @@ const connectDB = require("../utils/connectDB.js");
 const ErrorHandler = require("./middleware/errorHandler");
 
 
-const { Logtail } = require('@logtail/node');
-const { LogtailTransport } = require('@logtail/winston');
-
-const logtail = new Logtail('QCpZgJAz6URhAuUXuFk3L2fE');
-
-
 const app = express();
 
 app.use(time.init)
