@@ -7,9 +7,6 @@ const logtail = new Logtail('QCpZgJAz6URhAuUXuFk3L2fE');
 
 require("winston-daily-rotate-file");
 
-//Label
-const CATEGORY = "Log Rotation";
-
 
 //DailyRotateFile func()
 const fileRotateTransport = new winston.transports.DailyRotateFile({
@@ -21,12 +18,17 @@ const fileRotateTransport = new winston.transports.DailyRotateFile({
 
 const userLogger = winston.createLogger({
     levels: winston.config.syslog.levels,
+    colorize: true,
     transports: [
-        new winston.transports.Console()
+        fileRotateTransport,
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: '../logs/combined.log' }),
+        new LogtailTransport(logtail)
     ]
 });
 const authLogger = winston.createLogger({
     levels: winston.config.syslog.levels,
+    colorize: true,
     transports: [
         fileRotateTransport,
         new winston.transports.Console(),
@@ -38,7 +40,9 @@ const authLogger = winston.createLogger({
 
 const genericLogger = winston.createLogger({
     levels: winston.config.syslog.levels,
+    colorize: true,
     transports: [
+        fileRotateTransport,
         new winston.transports.Console(),
         new winston.transports.File({ filename: '../logs/combined.log' }),
         new LogtailTransport(logtail)

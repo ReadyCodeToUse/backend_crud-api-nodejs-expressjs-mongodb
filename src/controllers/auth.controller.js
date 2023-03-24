@@ -106,11 +106,11 @@ exports.loginUser = ([
                 //res.json(body);
 
             }else{
-                authLogger.info(bodyError);
+                authLogger.error(bodyError);
                 res.status(401).json(bodyError);
             }
         }else{
-            authLogger.info(bodyError);
+            authLogger.error(bodyError);
             res.status(401).json(bodyError);
         }
 
