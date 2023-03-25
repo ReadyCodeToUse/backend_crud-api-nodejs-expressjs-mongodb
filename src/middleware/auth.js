@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
+const {User} = require('../models/User.model');
+
 const config = process.env;
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async(req, res, next) => {
     const token =
         req.body.token || req.query.token || req.headers["x-access-token"];
 
@@ -20,7 +22,9 @@ const verifyToken = (req, res, next) => {
         //return res.status(403).send("test");
     }
     try {
-        req.user = jwt.verify(token, config.TOKEN_KEY);
+        const decoded = jwt.verify(token, config.TOKEN_KEY);
+        req.user = await User.findById(decoded._id);
+
     } catch (err) {
         const body = {
             timestamp: moment.tz("Europe/Rome").format(),

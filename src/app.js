@@ -15,6 +15,7 @@ app.use(express.json());
 
 const authRouter = require('./routes/auth.route');
 const userRouter = require('./routes/user.route');
+const companyRouter = require('./routes/company.route');
 
 const auth = require('./middleware/auth');
 
@@ -22,6 +23,8 @@ const auth = require('./middleware/auth');
 app.use('/auth', authRouter);
 
 app.use('/user', auth, userRouter);
+
+app.use('/company', auth, companyRouter);
 
 
 app.use(ErrorHandler);
