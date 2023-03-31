@@ -16,12 +16,10 @@ app.use(express.json());
 const authRouter = require('./routes/auth.route');
 const userRouter = require('./routes/user.route');
 
-const auth = require('./middleware/auth');
-
 
 app.use('/auth', authRouter);
 
-app.use('/user', auth, userRouter);
+app.use('/user', userRouter);
 
 
 app.use(ErrorHandler);

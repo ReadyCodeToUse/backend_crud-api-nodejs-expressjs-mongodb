@@ -1,4 +1,3 @@
-
 const {check, validationResult} = require("express-validator");
 
 //const env = process.env.NODE_ENV || "prod";

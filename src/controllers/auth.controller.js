@@ -3,13 +3,12 @@ const crypto = require("crypto");
 const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
 const successResponse = require('../../utils/successResponse');
-
-const {authLogger} = require ('../../utils/logger');
+const {authLogger} = require('../../utils/logger');
 //const env = process.env.NODE_ENV || "prod";
-
 
 const {User} = require('../models/User.model');
 const moment = require("moment/moment");
+const {error} = require("winston");
 
 /**
  * @param req
@@ -57,16 +56,22 @@ exports.registerUser = ([
             expiresIn: '2h'
         }
 
-        successResponse(req,res,null,'User registered',customData);
-        }, error => {
+        successResponse(req, res, null, 'User registered', customData);
+    }, error => {
         next(error);
         //res.status(500).json(error);
     })
 });
 
 
-
-
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Login User
+ * @route           POST /auth/login
+ * @access          Public
+ */
 exports.loginUser = ([
     check('Email', 'Email is required').notEmpty(),
     check('password', 'Password is required').notEmpty(),
@@ -86,7 +91,7 @@ exports.loginUser = ([
             status: 401,
             message: 'User or password incorrect. Please try again',
         }
-        if(user){
+        if (user) {
             if (await bcryptjs.compare(password, user.password)) {
                 // Generate JWT token
                 console.log("User logged:" + user._id);
@@ -102,14 +107,14 @@ exports.loginUser = ([
                     token: token,
                     expiresIn: '2h'
                 }
-                successResponse(req,res,null,'User logged in', customData)
+                successResponse(req, res, null, 'User logged in', customData)
                 //res.json(body);
 
-            }else{
+            } else {
                 authLogger.error(bodyError);
                 res.status(401).json(bodyError);
             }
-        }else{
+        } else {
             authLogger.error(bodyError);
             res.status(401).json(bodyError);
         }
@@ -121,3 +126,42 @@ exports.loginUser = ([
         //res.status(500).json(error);
     })
 });
+
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Log user out / clear cookie
+ * @route           GET auth/logout
+ * @access          Private
+ */
+exports.logout = async (req, res, next) => {
+
+    res.cookie('token', 'none', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    })
+    successResponse(req, res, null, 'User logged out', null)
+};
+
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Get Current Logged User
+ * @route           GET /auth/me
+ * @access          Private
+ */
+exports.getMe = async (req, res, next) => {
+
+    // retrieve user from request
+    const user = req.user;
+
+    User.findById(user._id).then((userData) => {
+        successResponse(req, res, null, 'User correctly retrieved', userData);
+    }, error => {
+        next(error);
+    });
+};

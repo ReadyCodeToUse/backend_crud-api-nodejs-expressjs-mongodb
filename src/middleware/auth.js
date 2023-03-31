@@ -1,14 +1,15 @@
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
+const {User} = require("../models/User.model");
+const asyncHandler = require("./async");
+const ErrorResponse = require("../../utils/errorResponse");
 
 const config = process.env;
 
-const verifyToken = (req, res, next) => {
-    const token =
-        req.body.token || req.query.token || req.headers["x-access-token"];
 
+exports.protect = asyncHandler(async (req, res, next) => {
+    const token = req.body.token || req.query.token || req.headers["x-access-token"];
     if (!token) {
-
         const body = {
             timestamp: moment.tz("Europe/Rome").format(),
             path: req.originalUrl,
@@ -20,7 +21,9 @@ const verifyToken = (req, res, next) => {
         //return res.status(403).send("test");
     }
     try {
-        req.user = jwt.verify(token, config.TOKEN_KEY);
+        const decoded = jwt.verify(token, config.TOKEN_KEY);
+        req.user = await User.findById(decoded._id);
+
     } catch (err) {
         const body = {
             timestamp: moment.tz("Europe/Rome").format(),
@@ -32,6 +35,20 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json(body);
     }
     return next();
-};
 
-module.exports = verifyToken;
+});
+
+// Grant access to specific roles
+exports.authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new ErrorResponse(
+                    `User role <${req.user.role}> is not authorized to access this route`,
+                    403
+                )
+            );
+        }
+        next();
+    };
+};
