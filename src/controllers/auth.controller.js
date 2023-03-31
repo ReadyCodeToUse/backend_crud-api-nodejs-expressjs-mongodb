@@ -128,8 +128,6 @@ exports.loginUser = ([
 });
 
 
-
-
 /**
  * @param req
  * @param res
@@ -144,9 +142,8 @@ exports.logout = async (req, res, next) => {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     })
-    successResponse(req,res,null,'User logged out',null)
+    successResponse(req, res, null, 'User logged out', null)
 };
-
 
 
 /**
@@ -162,9 +159,9 @@ exports.getMe = async (req, res, next) => {
     // retrieve user from request
     const user = req.user;
 
-    User.findById(user._id).then((userData)=>{
-        successResponse(req,res,null,'User correctly retrieved',userData);
-    }, error =>{
+    User.findById(user._id).then((userData) => {
+        successResponse(req, res, null, 'User correctly retrieved', userData);
+    }, error => {
         next(error);
-        });
+    });
 };

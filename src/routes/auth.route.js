@@ -6,7 +6,7 @@ const {
     logout
 } = require('../controllers/auth.controller');
 
-const auth = require('../middleware/auth');
+const {protect} = require('../middleware/auth');
 
 const router = express.Router({mergeParams: true});
 
@@ -18,8 +18,11 @@ router.route('/login')
     .post(loginUser)
 
 router.route('/me')
-    .get(auth, getMe)
+    .get(protect, getMe)
 
 router.route('/logout')
     .get(logout)
+
+
+
 module.exports = router;
