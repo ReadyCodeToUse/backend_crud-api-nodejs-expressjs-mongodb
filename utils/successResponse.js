@@ -4,6 +4,7 @@ const successResponse = (req, res, customStatus, customMessage, customData) => {
 
     const response = {
         timestamp: moment.tz("Europe/Rome").format(),
+        reqId: req.reqId,
         method: req.method,
         path: req.originalUrl,
         status: customStatus === null ? res.statusCode : customStatus,

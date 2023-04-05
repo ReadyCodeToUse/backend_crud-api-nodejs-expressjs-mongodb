@@ -19,6 +19,7 @@ const errorHandler = (err, req, res, next) => {
 
             const response = {
                 timestamp: moment.tz("Europe/Rome").format(),
+                reqId: req.reqId,
                 success: false,
                 path: req.originalUrl,
                 method: req.method,
@@ -31,6 +32,7 @@ const errorHandler = (err, req, res, next) => {
         } else {
             const response = {
                 timestamp: moment.tz("Europe/Rome").format(),
+                reqId: req.reqId,
                 success: false,
                 path: req.originalUrl,
                 method: req.method,
@@ -52,6 +54,7 @@ const errorHandler = (err, req, res, next) => {
         const field = Object.keys(err.keyValue);
         const response ={
             timestamp: moment.tz("Europe/Rome").format(),
+            reqId: req.reqId,
             success: false,
             path: req.originalUrl,
             method: req.method,
@@ -65,15 +68,15 @@ const errorHandler = (err, req, res, next) => {
     }
 
     const errStatus = err.statusCode || 500;
-    console.log("statusCode: " +err.statusCode);
     const errMsg = err.message || 'Something went wrong';
 
     const response = {
         timestamp: moment.tz("Europe/Rome").format(),
+        reqId: req.reqId,
         success: false,
         path: req.originalUrl,
         method: req.method,
-        status: res.statusCode,
+        status: errStatus,
         message: errMsg,
         stack: process.env.NODE_ENV === 'development' ? err.stack : {}
     }

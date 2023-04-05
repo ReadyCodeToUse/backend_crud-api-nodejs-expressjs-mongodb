@@ -9,6 +9,11 @@ const {authLogger} = require('../../utils/logger');
 const {User} = require('../models/User.model');
 const moment = require("moment/moment");
 const {error} = require("winston");
+const {generateRandomReqId} = require('../../utils/reqId');
+
+
+const httpContext = require('express-http-context');
+
 
 /**
  * @param req
@@ -26,6 +31,7 @@ exports.registerUser = ([
     check('password', 'Password is required').notEmpty(),
 ], async (req, res, next) => {
     const errors = validationResult(req);
+    req.reqId = generateRandomReqId();
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
@@ -55,7 +61,6 @@ exports.registerUser = ([
             token: token,
             expiresIn: '2h'
         }
-
         successResponse(req, res, null, 'User registered', customData);
     }, error => {
         next(error);
@@ -76,6 +81,7 @@ exports.loginUser = ([
     check('Email', 'Email is required').notEmpty(),
     check('password', 'Password is required').notEmpty(),
 ], async (req, res, next) => {
+    req.reqId = generateRandomReqId();
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -86,6 +92,7 @@ exports.loginUser = ([
         //user exists
         const bodyError = {
             timestamp: moment.tz("Europe/Rome").format(),
+            reqId: req.reqId,
             method: req.method,
             path: req.originalUrl,
             status: 401,
@@ -138,6 +145,7 @@ exports.loginUser = ([
  */
 exports.logout = async (req, res, next) => {
 
+    req.reqId = generateRandomReqId();
     res.cookie('token', 'none', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
@@ -159,6 +167,7 @@ exports.getMe = async (req, res, next) => {
     // retrieve user from request
     const user = req.user;
 
+    req.reqId = generateRandomReqId();
     User.findById(user._id).then((userData) => {
         successResponse(req, res, null, 'User correctly retrieved', userData);
     }, error => {
