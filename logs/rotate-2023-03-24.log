@@ -1,2 +1,0 @@
-{"data":{"expiresIn":"2h","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE4YjZhNDllZGVjZjY0ZWZmMGE1ZmMiLCJlbWFpbCI6Im1hcmNvLnJvc3NpQGdtYWlsLmNvbSIsImlhdCI6MTY3OTY1NTAzNiwiZXhwIjoxNjc5NjYyMjM2fQ.7JeIFotLHq6DbLoFBahjQaE_GnbtjpHuAmiFWrxYoPs"},"level":"info","message":"User logged in","method":"POST","path":"/auth/login","status":200,"timestamp":"2023-03-24T11:50:36+01:00"}
-{"level":"error","message":"User or password incorrect. Please try again","method":"POST","path":"/auth/login","status":401,"timestamp":"2023-03-24T11:58:24+01:00"}

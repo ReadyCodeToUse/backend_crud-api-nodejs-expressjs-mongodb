@@ -23,23 +23,18 @@ const httpContext = require('express-http-context');
  * @route           POST /auth/register
  * @access          Public
  */
-exports.registerUser = ([
-    //check('Username', 'Username is required').notEmpty(),
-    check('name', 'Name is required').notEmpty(),
-    check('surname', 'Surname is required').notEmpty(),
-    check('email', 'Email is required').notEmpty(),
-    check('password', 'Password is required').notEmpty(),
-], async (req, res, next) => {
+exports.registerUser = (async (req, res, next) => {
     const errors = validationResult(req);
     req.reqId = generateRandomReqId();
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    let {Username, name, surname, email, password, role} = req.body;
+    let email = req.body.email;
+    let password = req.body.loginData.password;
 
     //encrypt password
     const salt = await bcryptjs.genSalt(10);
-    password = await bcryptjs.hash(password, salt);
+    req.body.loginData.password = await bcryptjs.hash(password, salt);
     const randomUserId = crypto.randomBytes(8).toString('hex');
 
     // Generate JWT token
@@ -50,13 +45,8 @@ exports.registerUser = ([
             expiresIn: "2h",
         }
     );
-    await User.create({
-        name: name,
-        surname: surname,
-        email: email,
-        password: password,
-        role: role
-    }).then(() => {
+    await User.create(req.body
+    ).then(() => {
         const customData = {
             token: token,
             expiresIn: '2h'

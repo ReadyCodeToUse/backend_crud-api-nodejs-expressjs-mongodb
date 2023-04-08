@@ -1,0 +1,13 @@
+{
+  "firstName": "Andrea",
+  "lastName" : "Ioele",
+  "birthDate" : "1997-04-15",
+  "sex" : "M",
+  "email" : "a.ioele@icloud.com",
+  "loginData" : {
+    "username": "andrea.ioele",
+    "password" : "password",
+    "role": "user"
+  },
+  "address": "Via torino milano"
+}

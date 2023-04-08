@@ -1,12 +1,12 @@
 {
   "_id" : "Object(id)",
-  "name": "String",
-  "surname": "String",
+  "firstName": "String",
+  "lastName": "String",
   "birthDate": "Data",
   "sex" : ["M","F","N"],
+  "email": "String",
   "loginData" : {
     "username": "String",
-    "email": "String",
     "password" : "String",
     "isActive" : "Boolean",
     "role" : ["admin", "user"]
