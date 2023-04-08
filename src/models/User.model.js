@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema({
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
 
-    loginData: [{
+    loginData: {
         username: {
             type: String,
             unique: true,
@@ -78,7 +78,7 @@ const UserSchema = new mongoose.Schema({
             },
             required: true
         }
-    }],
+    },
     address: {
         type: String,
         required: [true, 'Please add an address']

@@ -68,7 +68,7 @@ exports.registerUser = (async (req, res, next) => {
  * @access          Public
  */
 exports.loginUser = ([
-    check('Email', 'Email is required').notEmpty(),
+    check('email', 'Email is required').notEmpty(),
     check('password', 'Password is required').notEmpty(),
 ], async (req, res, next) => {
     req.reqId = generateRandomReqId();
@@ -76,7 +76,8 @@ exports.loginUser = ([
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    let {email, password} = req.body;
+    let email = req.body.email;
+    let password = req.body.password;
 
     await User.findOne({email: email}).then(async user => {
         //user exists
@@ -89,7 +90,7 @@ exports.loginUser = ([
             message: 'User or password incorrect. Please try again',
         }
         if (user) {
-            if (await bcryptjs.compare(password, user.password)) {
+            if (await bcryptjs.compare(password, user.loginData.password)) {
                 // Generate JWT token
                 console.log("User logged:" + user._id);
                 const token = jwt.sign(
