@@ -84,8 +84,6 @@ const router = express.Router({mergeParams: true});
 router.route('/register')
     .post(registerUser)
 
-
-
 /**
  * @swagger
  * /auth/login:
@@ -133,9 +131,60 @@ router.route('/register')
 router.route('/login')
     .post(loginUser)
 
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     security:
+ *       - Authentication: []
+ *     summary: Get Current user logged in
+ *     tags:
+ *       - Auth
+ *     description: Get Current user logged in
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. User data retrieved
+ *       400:
+ *         description: Login failed
+ *
+ *
+ */
 router.route('/me')
     .get(protect, getMe)
 
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   get:
+ *     security:
+ *       - Authentication: []
+ *     summary: Logout Current user logged in
+ *     tags:
+ *       - Auth
+ *     description: Logout Current user logged in
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. User logged out
+ *       400:
+ *         description: Logged failed
+ *
+ *
+ */
 router.route('/logout')
     .get(logout)
 

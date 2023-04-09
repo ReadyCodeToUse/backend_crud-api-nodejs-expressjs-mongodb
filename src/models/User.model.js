@@ -106,6 +106,10 @@ const UserSchema = new mongoose.Schema({
 }, {collection: "users"})
 
 UserSchema.set("timestamps", true);
+UserSchema.set('toObject', { getters: true });
+UserSchema.set('toJSON', { virtuals: true })
+
+
 
 UserSchema.pre('save', async function (next) {
     const loc = await geocoder.geocode(this.address);
@@ -123,6 +127,11 @@ UserSchema.pre('save', async function (next) {
     // Do not save address on db
     this.address = undefined;
     next();
+});
+
+UserSchema.virtual('fullName').get(function () {
+        return this.firstName + ' ' + this.lastName;
+        next();
 });
 
 

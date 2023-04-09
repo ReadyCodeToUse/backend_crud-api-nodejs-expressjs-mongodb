@@ -50,6 +50,15 @@ const options = {
             email: "info@email.com",
          },
       },
+      components: {
+         securitySchemes: {
+            Authentication: {
+               type:   'http',
+               scheme: 'bearer',
+               bearerFormat: 'JWT',
+            }
+         }
+      },
       servers: [
          {
             url: "http://localhost:3010",
