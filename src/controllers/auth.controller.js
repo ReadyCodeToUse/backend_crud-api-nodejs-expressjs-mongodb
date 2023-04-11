@@ -25,6 +25,7 @@ const httpContext = require('express-http-context');
  */
 exports.registerUser = (async (req, res, next) => {
     const errors = validationResult(req);
+    req.body.loginData.isActive = 0;
     req.reqId = generateRandomReqId();
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
