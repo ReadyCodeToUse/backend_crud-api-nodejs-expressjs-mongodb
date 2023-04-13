@@ -31,6 +31,11 @@
             "hash": "e59cf82a810db2d64564828736059c92b127387c0549fd681475ffc9c9eb1833"
         },
         {
+            "date": 1681221232373,
+            "name": "logs/rotate-2023-04-11.log",
+            "hash": "bf6ee9911fe2cf1b0334f32e485dda7b4f99852dc053e473acd4e9f4ea367d92"
+        },
+        {
             "date": 1681412964264,
             "name": "logs/rotate-2023-04-13.log",
             "hash": "67b9df4f934c24b01f5fb57dd969bb8b92cdd3691f04af47965ed968b5503ffa"
