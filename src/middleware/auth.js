@@ -3,15 +3,19 @@ const moment = require("moment");
 const {User} = require("../models/User.model");
 const asyncHandler = require("./async");
 const ErrorResponse = require("../../utils/errorResponse");
+const {generateRandomReqId} = require("../../utils/reqId");
 
 const config = process.env;
 
 
 exports.protect = asyncHandler(async (req, res, next) => {
     const token = req.body.token || req.query.token || req.headers["x-access-token"];
+    req.reqId = generateRandomReqId();
+
     if (!token) {
         const body = {
             timestamp: moment.tz("Europe/Rome").format(),
+            reqId: req.reqId,
             path: req.originalUrl,
             method: req.method,
             status: 403,
@@ -27,6 +31,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     } catch (err) {
         const body = {
             timestamp: moment.tz("Europe/Rome").format(),
+            reqId: req.reqId,
             path: req.originalUrl,
             method: req.method,
             status: 401,

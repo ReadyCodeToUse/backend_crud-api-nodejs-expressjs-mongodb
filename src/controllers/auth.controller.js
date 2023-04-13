@@ -13,6 +13,7 @@ const {generateRandomReqId} = require('../../utils/reqId');
 
 
 const httpContext = require('express-http-context');
+const ErrorResponse = require("../../utils/errorResponse");
 
 
 /**
@@ -166,3 +167,67 @@ exports.getMe = async (req, res, next) => {
         next(error);
     });
 };
+
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Update password
+ * @route           PUT /auth/updatepassword
+ * @access          Private
+ */
+exports.updatePassword = async (req, res, next) => {
+    req.reqId = generateRandomReqId();
+
+    //get user password from logged user (field in request)
+    const user = await User.findById(req.user._id).select('loginData.password');
+
+    let {currentPassword, newPassword } = req.body;
+    // Check current password
+    if(!(await user.matchPassword(currentPassword))){
+        return next(new ErrorResponse('Password is incorrect', 401));
+    }
+
+    const currPass = await user.encryptPassword(newPassword);
+    await User.findByIdAndUpdate(
+        { _id : user._id },
+        { $set : { "loginData.password" : currPass }},
+        { new : true}
+    ).then(()=>{
+
+        sendTokenResponse(user, 200, res);
+
+    }, error =>{
+        next(error);
+    });
+
+
+
+};
+
+
+
+
+// Get token from model, craete cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
+    //Create token
+    const token = user.getSignedJwtToken();
+    const options = {
+        expires: new Date(Date.now() + process.env.TOKEN_KEY_EXPIRED * 24 * 60 * 60 * 1000),
+        httpOnly: true
+    };
+
+    if (process.env.NODE_ENV === 'production') {
+        options.secure = true;
+    }
+
+    res.status(statusCode)
+        .cookie('token', token, options)
+        .json({
+            success: true,
+            token
+        })
+
+}
+
