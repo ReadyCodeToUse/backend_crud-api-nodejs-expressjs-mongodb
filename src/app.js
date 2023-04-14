@@ -34,7 +34,7 @@ app.listen(process.env.SERVER_PORT, () =>{
 
 const options = {
    definition: {
-      openapi: "3.0.0",
+      openapi: "3.0.3",
       info: {
          title: "Express API with Swagger",
          version: "0.1.0",
