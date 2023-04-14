@@ -1,7 +1,7 @@
 const express = require('express');
 const {
     getAllUsers,
-    updateCurrentUser
+    updateCurrentUserData
 } = require('../controllers/user.controller');
 
 const {protect, authorize} = require("../middleware/auth");
@@ -58,6 +58,32 @@ router.route('/all')
  *           description: JWT access token
  *           schema:
  *             type: string
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                firstName:
+ *                  type: string
+ *                  description: The name of the user
+ *                lastName:
+ *                  type: string
+ *                  description: The last name of the user
+ *                birthData:
+ *                  type: string
+ *                  description: The birthdate of the user (YYYY-MM-DD)
+ *                sex:
+ *                  type: string
+ *                  description: The sex of the user
+ *                  enum:
+ *                    - M
+ *                    - F
+ *                    - N
+ *                address:
+ *                  type: string
+ *                  description: The address of the user
  *     responses:
  *       200:
  *         description: Success. Current User updated
@@ -67,6 +93,6 @@ router.route('/all')
  *
  */
 router.route('/update')
-    .put(protect,updateCurrentUser)
+    .put(protect,updateCurrentUserData)
 
 module.exports = router;

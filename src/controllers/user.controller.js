@@ -38,12 +38,24 @@ exports.getAllUsers = async (req, res, next) => {
  * @route           POST /user/update
  * @access          Private
  */
-exports.updateCurrentUser = async (req, res, next) => {
+exports.updateCurrentUserData = async (req, res, next) => {
+
+    //sanitize field schema to prevent undesirable field update (like password..)
+    const fieldToUpdate = {
+        firstName : req.body.firstName,
+        lastName : req.body.lastName,
+        birthData : req.body.birthData,
+        sex : req.body.sex,
+        email : req.body.email,
+        address : req.body.address
+    };
+
     req.reqId = generateRandomReqId();
+
     const userId = req.user._id.toString();
     User.findByIdAndUpdate({
         _id: userId
-    }, req.body, {new: true}).then((user) => {
+    }, fieldToUpdate, {new: true}).then((user) => {
         successResponse(req, res, null, 'User edited correctly', user)
     }, error => {
         next(error);
