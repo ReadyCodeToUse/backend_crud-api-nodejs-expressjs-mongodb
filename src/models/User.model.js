@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const geocoder = require("../../utils/geocoder");
+const jwt = require("jsonwebtoken");
+const bcryptjs = require('bcryptjs');
 
 
 const validateEmail = (email) =>{
@@ -55,7 +57,6 @@ const UserSchema = new mongoose.Schema({
     loginData: {
         type: Object,
         required: true,
-        immutable: true,
         username: {
             type: String,
             unique: true,
@@ -68,8 +69,7 @@ const UserSchema = new mongoose.Schema({
         },
         password: {
             type: String,
-            required: true,
-            immutable: true
+            required: true
         },
         isActive: {
             type: Boolean,
@@ -138,8 +138,33 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.virtual('fullName').get(function () {
         return this.firstName + ' ' + this.lastName;
-        next();
 });
+
+
+// Sign JWT and return
+UserSchema.methods.getSignedJwtToken = function () {
+    return jwt.sign({
+            _id: this._id
+        },
+        process.env.TOKEN_KEY,
+        {
+            expiresIn: process.env.TOKEN_KEY_EXPIRED
+        }
+    );
+}
+
+// Match user entered password to hashed password in database
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcryptjs.compare(enteredPassword, this.loginData.password);
+}
+
+
+UserSchema.methods.encryptPassword = async function (enteredPassword) {
+    const salt = await bcryptjs.genSalt(10);
+    return this.loginData.password = await bcryptjs.hash(enteredPassword, salt);
+}
+
+
 
 
 exports.User = mongoose.model("user", UserSchema);

@@ -3,7 +3,8 @@ const {
     registerUser,
     loginUser,
     getMe,
-    logout
+    logout,
+    updatePassword
 } = require('../controllers/auth.controller');
 
 const {protect} = require('../middleware/auth');
@@ -39,7 +40,7 @@ const router = express.Router({mergeParams: true});
  *                   description: The sex of the user
  *                   enum:
  *                     - M
- *                     - S
+ *                     - F
  *                     - N
  *                 email:
  *                   type: string
@@ -188,6 +189,52 @@ router.route('/me')
 router.route('/logout')
     .get(logout)
 
+
+
+
+/**
+ * @swagger
+ * /auth/updatepassword:
+ *   put:
+ *     security:
+ *       - Authentication: []
+ *     summary: Update password for user logged in
+ *     tags:
+ *       - Auth
+ *     description: Update password for user logged in
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 currentPassword:
+ *                   type: string
+ *                   description: The current password of the user
+ *                 newPassword:
+ *                   type: string
+ *                   description: The new Password
+ *               required:
+ *                 - currentPassword
+ *                 - newPassword
+ *     responses:
+ *       200:
+ *         description: Success. User password updated
+ *       401:
+ *         description: Current password don't match
+ *
+ *
+ */
+router.route('/updatepassword')
+    .put(protect, updatePassword)
 
 
 module.exports = router;

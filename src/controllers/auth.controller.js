@@ -13,6 +13,7 @@ const {generateRandomReqId} = require('../../utils/reqId');
 
 
 const httpContext = require('express-http-context');
+const ErrorResponse = require("../../utils/errorResponse");
 
 
 /**
@@ -38,21 +39,11 @@ exports.registerUser = (async (req, res, next) => {
     req.body.loginData.password = await bcryptjs.hash(password, salt);
     const randomUserId = crypto.randomBytes(8).toString('hex');
 
-    // Generate JWT token
-    const token = jwt.sign(
-        {randomUserId, email},
-        process.env.TOKEN_KEY,
-        {
-            expiresIn: "2h",
-        }
-    );
+
     await User.create(req.body
-    ).then(() => {
-        const customData = {
-            token: token,
-            expiresIn: '2h'
-        }
-        successResponse(req, res, null, 'User registered', customData);
+    ).then((user) => {
+        // Generate JWT token
+        sendTokenResponse(req,res,user,'User Registered');
     }, error => {
         next(error);
         //res.status(500).json(error);
@@ -94,20 +85,7 @@ exports.loginUser = ([
             if (await bcryptjs.compare(password, user.loginData.password)) {
                 // Generate JWT token
                 console.log("User logged:" + user._id);
-                const token = jwt.sign(
-                    {_id: user._id, email: user.email},
-                    process.env.TOKEN_KEY,
-                    {
-                        expiresIn: "2h",
-                    }
-                );
-
-                const customData = {
-                    token: token,
-                    expiresIn: '2h'
-                }
-                successResponse(req, res, null, 'User logged in', customData)
-                //res.json(body);
+                sendTokenResponse(req, res, user, 'User logged in');
 
             } else {
                 authLogger.error(bodyError);
@@ -166,3 +144,59 @@ exports.getMe = async (req, res, next) => {
         next(error);
     });
 };
+
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Update password
+ * @route           PUT /auth/updatepassword
+ * @access          Private
+ */
+exports.updatePassword = async (req, res, next) => {
+    req.reqId = generateRandomReqId();
+
+    //get user password from logged user (field in request)
+    const user = await User.findById(req.user._id).select('loginData.password');
+
+    let {currentPassword, newPassword} = req.body;
+    // Check current password
+    if (!(await user.matchPassword(currentPassword))) {
+        return next(new ErrorResponse('Password is incorrect', 401));
+    }
+
+    const currPass = await user.encryptPassword(newPassword);
+    await User.findByIdAndUpdate(
+        {_id: user._id},
+        {$set: {"loginData.password": currPass}},
+        {new: true}
+    ).then(() => {
+
+        sendTokenResponse(req, res, user);
+
+    }, error => {
+        next(error);
+    });
+
+
+};
+
+
+// Get token from model, craete cookie and send response
+const sendTokenResponse = (req, res, user, customMessage) => {
+    //Create token
+    const token = user.getSignedJwtToken();
+    const customData = {
+        token: token,
+        expires: "2h",
+        httpOnly: true
+    };
+
+    if (process.env.NODE_ENV === 'production') {
+        customData.secure = true;
+    }
+
+    successResponse(req, res, 200, customMessage ? customMessage : null, customData);
+}
+
