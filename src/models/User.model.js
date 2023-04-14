@@ -144,11 +144,11 @@ UserSchema.virtual('fullName').get(function () {
 // Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({
-            id: this._id
+            _id: this._id
         },
         process.env.TOKEN_KEY,
         {
-            expiresIn: process.env.TOKEN_KEY_EXPIRED
+            expiresIn: "2h"
         }
     );
 }

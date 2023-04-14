@@ -4,6 +4,7 @@ const {User} = require("../models/User.model");
 const asyncHandler = require("./async");
 const ErrorResponse = require("../../utils/errorResponse");
 const {generateRandomReqId} = require("../../utils/reqId");
+const {exitOnError} = require("winston");
 
 const config = process.env;
 
@@ -26,7 +27,21 @@ exports.protect = asyncHandler(async (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, config.TOKEN_KEY);
-        req.user = await User.findById(decoded._id);
+        const currentUser = await User.findById(decoded._id);
+        if(currentUser != null) {
+            req.user = currentUser;
+        }else{
+            const body = {
+                timestamp: moment.tz("Europe/Rome").format(),
+                reqId: req.reqId,
+                path: req.originalUrl,
+                method: req.method,
+                status: 401,
+                message: 'Invalid user token.'
+            }
+            return res.status(401).json(body);
+
+        }
 
     } catch (err) {
         const body = {

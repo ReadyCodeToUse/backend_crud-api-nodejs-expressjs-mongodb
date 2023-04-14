@@ -39,16 +39,17 @@ exports.registerUser = (async (req, res, next) => {
     req.body.loginData.password = await bcryptjs.hash(password, salt);
     const randomUserId = crypto.randomBytes(8).toString('hex');
 
-    // Generate JWT token
-    const token = jwt.sign(
-        {randomUserId, email},
-        process.env.TOKEN_KEY,
-        {
-            expiresIn: "2h",
-        }
-    );
+
     await User.create(req.body
     ).then(() => {
+        // Generate JWT token
+        const token = jwt.sign(
+            {_id: this._id},
+            process.env.TOKEN_KEY,
+            {
+                expiresIn: "2h",
+            }
+        );
         const customData = {
             token: token,
             expiresIn: '2h'
@@ -95,6 +96,9 @@ exports.loginUser = ([
             if (await bcryptjs.compare(password, user.loginData.password)) {
                 // Generate JWT token
                 console.log("User logged:" + user._id);
+
+                sendTokenResponse(req, res, user, 'User logged in');
+                /*
                 const token = jwt.sign(
                     {_id: user._id, email: user.email},
                     process.env.TOKEN_KEY,
@@ -107,7 +111,9 @@ exports.loginUser = ([
                     token: token,
                     expiresIn: '2h'
                 }
-                successResponse(req, res, null, 'User logged in', customData)
+
+                 */
+                //successResponse(req, res, null, 'User logged in', customData)
                 //res.json(body);
 
             } else {
@@ -183,51 +189,43 @@ exports.updatePassword = async (req, res, next) => {
     //get user password from logged user (field in request)
     const user = await User.findById(req.user._id).select('loginData.password');
 
-    let {currentPassword, newPassword } = req.body;
+    let {currentPassword, newPassword} = req.body;
     // Check current password
-    if(!(await user.matchPassword(currentPassword))){
+    if (!(await user.matchPassword(currentPassword))) {
         return next(new ErrorResponse('Password is incorrect', 401));
     }
 
     const currPass = await user.encryptPassword(newPassword);
     await User.findByIdAndUpdate(
-        { _id : user._id },
-        { $set : { "loginData.password" : currPass }},
-        { new : true}
-    ).then(()=>{
+        {_id: user._id},
+        {$set: {"loginData.password": currPass}},
+        {new: true}
+    ).then(() => {
 
-        sendTokenResponse(user, 200, res);
+        sendTokenResponse(req, res, user);
 
-    }, error =>{
+    }, error => {
         next(error);
     });
-
 
 
 };
 
 
-
-
 // Get token from model, craete cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
+const sendTokenResponse = (req, res, user, customMessage) => {
     //Create token
     const token = user.getSignedJwtToken();
-    const options = {
-        expires: new Date(Date.now() + process.env.TOKEN_KEY_EXPIRED * 24 * 60 * 60 * 1000),
+    const customData = {
+        token: token,
+        expires: "2h",
         httpOnly: true
     };
 
     if (process.env.NODE_ENV === 'production') {
-        options.secure = true;
+        customData.secure = true;
     }
 
-    res.status(statusCode)
-        .cookie('token', token, options)
-        .json({
-            success: true,
-            token
-        })
-
+    successResponse(req, res, 200, customMessage ? customMessage : null, customData);
 }
 
