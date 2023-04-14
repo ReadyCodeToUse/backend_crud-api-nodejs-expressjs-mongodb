@@ -15,6 +15,11 @@ const successResponse = (req, res, customStatus, customMessage, customData) => {
     authLogger.info(response);
 
 
-    res.status(customStatus === null ? res.statusCode : customStatus).json(response);
+    if(customData.token){
+        res.status(customStatus === null ? res.statusCode : customStatus).cookie('token', customData.token, customData.expires).json(response);
+
+    }else{
+        res.status(customStatus === null ? res.statusCode : customStatus).json(response);
+    }
 }
 module.exports = successResponse;

@@ -41,20 +41,9 @@ exports.registerUser = (async (req, res, next) => {
 
 
     await User.create(req.body
-    ).then(() => {
+    ).then((user) => {
         // Generate JWT token
-        const token = jwt.sign(
-            {_id: this._id},
-            process.env.TOKEN_KEY,
-            {
-                expiresIn: "2h",
-            }
-        );
-        const customData = {
-            token: token,
-            expiresIn: '2h'
-        }
-        successResponse(req, res, null, 'User registered', customData);
+        sendTokenResponse(req,res,user,'User Registered');
     }, error => {
         next(error);
         //res.status(500).json(error);
@@ -96,25 +85,7 @@ exports.loginUser = ([
             if (await bcryptjs.compare(password, user.loginData.password)) {
                 // Generate JWT token
                 console.log("User logged:" + user._id);
-
                 sendTokenResponse(req, res, user, 'User logged in');
-                /*
-                const token = jwt.sign(
-                    {_id: user._id, email: user.email},
-                    process.env.TOKEN_KEY,
-                    {
-                        expiresIn: "2h",
-                    }
-                );
-
-                const customData = {
-                    token: token,
-                    expiresIn: '2h'
-                }
-
-                 */
-                //successResponse(req, res, null, 'User logged in', customData)
-                //res.json(body);
 
             } else {
                 authLogger.error(bodyError);

@@ -148,7 +148,7 @@ UserSchema.methods.getSignedJwtToken = function () {
         },
         process.env.TOKEN_KEY,
         {
-            expiresIn: "2h"
+            expiresIn: process.env.TOKEN_KEY_EXPIRED
         }
     );
 }
