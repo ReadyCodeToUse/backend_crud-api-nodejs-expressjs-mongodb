@@ -1,15 +1,15 @@
 const express = require('express');
 const {
-    registerUser,
-    loginUser,
-    getMe,
-    logout,
-    updatePassword
+  registerUser,
+  loginUser,
+  getMe,
+  logout,
+  updatePassword,
 } = require('../controllers/auth.controller');
 
-const {protect} = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
-const router = express.Router({mergeParams: true});
+const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ const router = express.Router({mergeParams: true});
  *
  */
 router.route('/register')
-    .post(registerUser)
+  .post(registerUser);
 
 /**
  * @swagger
@@ -130,7 +130,7 @@ router.route('/register')
  *
  */
 router.route('/login')
-    .post(loginUser)
+  .post(loginUser);
 
 /**
  * @swagger
@@ -158,8 +158,7 @@ router.route('/login')
  *
  */
 router.route('/me')
-    .get(protect, getMe)
-
+  .get(protect, getMe);
 
 /**
  * @swagger
@@ -187,10 +186,7 @@ router.route('/me')
  *
  */
 router.route('/logout')
-    .get(logout)
-
-
-
+  .get(logout);
 
 /**
  * @swagger
@@ -234,7 +230,6 @@ router.route('/logout')
  *
  */
 router.route('/updatepassword')
-    .put(protect, updatePassword)
-
+  .put(protect, updatePassword);
 
 module.exports = router;

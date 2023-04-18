@@ -1,13 +1,12 @@
 const express = require('express');
 const {
-    getAllUsers,
-    updateCurrentUserData
+  getAllUsers,
+  updateCurrentUserData,
 } = require('../controllers/user.controller');
 
-const {protect, authorize} = require("../middleware/auth");
+const { protect, authorize } = require('../middleware/auth');
 
-const router = express.Router({mergeParams: true});
-
+const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
@@ -35,11 +34,7 @@ const router = express.Router({mergeParams: true});
  *
  */
 router.route('/all')
-    .get(protect,authorize('admin'), getAllUsers)
-
-
-
-
+  .get(protect, authorize('admin'), getAllUsers);
 
 /**
  * @swagger
@@ -93,6 +88,6 @@ router.route('/all')
  *
  */
 router.route('/update')
-    .put(protect,updateCurrentUserData)
+  .put(protect, updateCurrentUserData);
 
 module.exports = router;
