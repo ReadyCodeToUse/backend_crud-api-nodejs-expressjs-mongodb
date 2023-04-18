@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon src/app.js",
-    "lint": "eslint --fix --ext .js,.jsx .",
+    "lint" : "eslint",
+    "lint-fix": "eslint --fix --ext .js,.jsx .",
     "prepare": "husky install"
   },
   "author": "Andrea Ioele",
@@ -35,6 +36,7 @@
     "eslint": "^8.38.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.1"
   }
 }
