@@ -1,16 +1,38 @@
 const { mongoose } = require('mongoose');
 const { genericLogger } = require('./logger');
 
-// const dbUrl = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@localhost:6000/${process.env.MONGODB_DATABASE_NAME}?authSource=admin`;
-const dbUrlProd = 'mongodb+srv://aioele:Andromeda50ioele@cluster-ai.xepqosm.mongodb.net/crud-api-db-prod?retryWrites=true&w=majority';
+let dbUrl = '';
+const { NODE_ENV } = process.env;
+if (NODE_ENV != null) {
+  switch (NODE_ENV) {
+    case 'preproduction':
+      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_PREPROD}:${process.env.MONGODB_PASSWORD_PREPROD}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_PREPROD}?retryWrites=true&w=majority`;
+      break;
+    case 'production':
+      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_PROD}:${process.env.MONGODB_PASSWORD_PROD}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_PROD}?retryWrites=true&w=majority`;
+      break;
+    case 'development':
+      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_DEV}:${process.env.MONGODB_PASSWORD_DEV}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_DEV}?retryWrites=true&w=majority`;
+      break;
+    case 'local':
+      dbUrl = `mongodb://${process.env.MONGODB_USERNAME_LOCAL}:${process.env.MONGODB_PASSWORD_LOCAL}@localhost:6000/${process.env.MONGODB_DATABASE_NAME_LOCAL}?authSource=admin`;
+      break;
+    default:
+      dbUrl = `mongodb://${process.env.MONGODB_USERNAME_LOCAL}:${process.env.MONGODB_PASSWORD_LOCAL}@localhost:6000/${process.env.MONGODB_DATABASE_NAME_LOCAL}?authSource=admin`;
+      process.env.NODE_ENV = 'local';
+      break;
+  }
+}
 const connectDB = async () => {
   try {
-    await mongoose.connect(dbUrlProd);
-    console.log('Database connected...');
-    console.log(dbUrlProd);
+    await mongoose.connect(dbUrl);
+    // eslint-disable-next-line no-console
+    console.log(`Database connected. \nURL: ${dbUrl}\nENV: ${process.env.NODE_ENV}`);
   } catch (error) {
     genericLogger.error(error);
-    console.log(dbUrlProd);
+    // eslint-disable-next-line no-console
+    console.log(dbUrl);
+    // eslint-disable-next-line no-console
     console.log(error.message);
     setTimeout(connectDB, 5000);
   }
