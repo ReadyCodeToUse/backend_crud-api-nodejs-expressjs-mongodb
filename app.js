@@ -3,8 +3,8 @@ require('dotenv').config();
 const time = require('express-timestamp');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const connectDB = require('../utils/connectDB');
-const ErrorHandler = require('./middleware/errorHandler');
+const connectDB = require('./utils/connectDB');
+const ErrorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
 
@@ -12,8 +12,8 @@ app.use(time.init);
 
 app.use(express.json());
 
-const authRouter = require('./routes/auth.route');
-const userRouter = require('./routes/user.route');
+const authRouter = require('./src/routes/auth.route');
+const userRouter = require('./src/routes/user.route');
 
 app.use('/auth', authRouter);
 
