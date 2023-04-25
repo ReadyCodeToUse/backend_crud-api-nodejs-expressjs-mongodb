@@ -7,7 +7,7 @@
   "loginData" : {
     "username": "andrea.ioele",
     "password" : "password",
-    "role": "user"
+    "role": "admin"
   },
   "address": "Via torino milano"
 }
