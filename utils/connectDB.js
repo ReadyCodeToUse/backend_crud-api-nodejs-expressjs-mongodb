@@ -1,5 +1,5 @@
 const { mongoose } = require('mongoose');
-const { genericLogger } = require('./logger');
+// const { genericLogger } = require('./logger');
 
 let dbUrl = '';
 const { NODE_ENV } = process.env;
@@ -29,7 +29,7 @@ const connectDB = async () => {
     // eslint-disable-next-line no-console
     console.log(`Database connected. \nURL: ${dbUrl}\nENV: ${process.env.NODE_ENV}`);
   } catch (error) {
-    genericLogger.error(error);
+    // genericLogger.error(error);
     // eslint-disable-next-line no-console
     console.log(dbUrl);
     // eslint-disable-next-line no-console

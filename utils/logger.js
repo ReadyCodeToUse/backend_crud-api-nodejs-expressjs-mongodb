@@ -1,3 +1,4 @@
+/*
 const winston = require('winston');
 const { LogtailTransport } = require('@logtail/winston');
 const { Logtail } = require('@logtail/node');
@@ -51,3 +52,5 @@ module.exports = {
   authLogger,
   genericLogger,
 };
+
+ */
