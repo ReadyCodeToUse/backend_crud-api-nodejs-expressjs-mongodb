@@ -21,6 +21,9 @@ app.use('/user', userRouter);
 
 app.use(ErrorHandler);
 
+app.get('/', (req, res) => {
+  res.send('<h1>Node.js CRUD API</h1> <h4>Message: Success</h4><p>Version: 1.0</p>');
+});
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is runnign on port: ${process.env.SERVER_PORT}`);
   connectDB();
