@@ -1,5 +1,5 @@
 const moment = require('moment');
-// const { authLogger } = require('./logger');
+const { authLogger } = require('./logger');
 
 const successResponse = (req, res, customStatus, customMessage, customData, createLog) => {
   if (createLog === undefined) {
@@ -15,7 +15,7 @@ const successResponse = (req, res, customStatus, customMessage, customData, crea
     message: customMessage === null ? res.message : customMessage,
     data: customData === null ? {} : customData,
   };
-  /*
+
   const responseForLog = {
     timestamp: moment.tz('Europe/Rome').format(),
     reqId: req.reqId,
@@ -25,9 +25,8 @@ const successResponse = (req, res, customStatus, customMessage, customData, crea
     message: customMessage === null ? res.message : customMessage,
     data: customData === null || !createLog ? {} : customData,
   };
- */
 
-  // authLogger.info(responseForLog);
+  authLogger.info(responseForLog);
 
   if (customData !== null && customData.token) {
     res.status(customStatus === null ? res.statusCode : customStatus).cookie('token', customData.token, customData.expires).json(response);

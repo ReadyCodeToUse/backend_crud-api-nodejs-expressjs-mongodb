@@ -2,7 +2,7 @@ const bcryptjs = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 const moment = require('moment/moment');
 const successResponse = require('../../utils/successResponse');
-// const { authLogger } = require('../../utils/logger');
+const { authLogger } = require('../../utils/logger');
 // const env = process.env.NODE_ENV || "prod";
 
 const { User } = require('../models/User.model');
@@ -96,11 +96,11 @@ exports.loginUser = ([
         console.log(`User logged:${user._id}`);
         sendTokenResponse(req, res, user, 'User logged in');
       } else {
-        // authLogger.error(bodyError);
+        authLogger.error(bodyError);
         res.status(401).json(bodyError);
       }
     } else {
-      // authLogger.error(bodyError);
+      authLogger.error(bodyError);
       res.status(401).json(bodyError);
     }
   }, (error) => {

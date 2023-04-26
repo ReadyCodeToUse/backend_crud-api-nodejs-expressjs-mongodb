@@ -1,11 +1,9 @@
 const moment = require('moment/moment');
-/*
+
 const {
   authLogger,
   genericLogger,
 } = require('../../utils/logger');
-
- */
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
@@ -32,7 +30,7 @@ const errorHandler = (err, req, res, next) => {
         fields,
         message: formattedErrors,
       };
-      // authLogger.error(response);
+      authLogger.error(response);
       return res.status(code).json(response);
     }
     const response = {
@@ -45,7 +43,7 @@ const errorHandler = (err, req, res, next) => {
       fields,
       message: errors,
     };
-    // authLogger.error(response);
+    authLogger.error(response);
     return res.status(code).json(response);
   }
 
@@ -65,7 +63,7 @@ const errorHandler = (err, req, res, next) => {
       stack: process.env.NODE_ENV === 'development' ? err.stack : {},
 
     };
-    // authLogger.error(response);
+    authLogger.error(response);
     return res.status(409).json(response);
   }
 
@@ -83,7 +81,7 @@ const errorHandler = (err, req, res, next) => {
     stack: process.env.NODE_ENV === 'development' ? err.stack : {},
   };
 
-  // genericLogger.error(response);
+  genericLogger.error(response);
 
   return res.status(errStatus).json(response);
 };
