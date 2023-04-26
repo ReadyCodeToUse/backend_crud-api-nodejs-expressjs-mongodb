@@ -5,7 +5,7 @@ let dbUrl = '';
 const { NODE_ENV } = process.env;
 if (NODE_ENV != null) {
   switch (NODE_ENV) {
-    case 'preproduction':
+    case 'stage':
       dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_PREPROD}:${process.env.MONGODB_PASSWORD_PREPROD}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_PREPROD}?retryWrites=true&w=majority`;
       break;
     case 'production':
