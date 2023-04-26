@@ -42,7 +42,7 @@ const genericLogger = winston.createLogger({
   transports: [
     // fileRotateTransport,
     new winston.transports.Console(),
-    new winston.transports.File({ filename: '../logs/combined.log' }),
+    // new winston.transports.File({ filename: '../logs/combined.log' }),
     new LogtailTransport(logtail),
   ],
 });
