@@ -1,0 +1,3 @@
+{"data":{"expires":"2h","httpOnly":true,"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ0ZWExNGZjMzliZDg5NmYzZDM3YmUiLCJpYXQiOjE2ODIyMzc5NzQsImV4cCI6MTY4MjI0NTE3NH0.u8DBgvAW6CD3fu05dCQiJZGGrZsI-2A8D98_Vouilx4"},"level":"info","message":"User Registered","method":"POST","path":"/auth/register","reqId":"aa81e0f1b67de7a352326319e35a294b","status":200,"timestamp":"2023-04-23T10:19:34+02:00"}
+{"code":8000,"codeName":"AtlasError","connectionGeneration":0,"level":"error","ok":0}
+{"code":8000,"codeName":"AtlasError","connectionGeneration":0,"level":"error","ok":0}
