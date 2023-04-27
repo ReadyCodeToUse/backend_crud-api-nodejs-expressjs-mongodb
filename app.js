@@ -26,14 +26,11 @@ app.get('/', (req, res) => {
   let text = 'local';
   if (NODE_ENV != null) {
     switch (NODE_ENV) {
-      case 'preproduction':
-        text = 'Preproduction env';
+      case 'stage':
+        text = 'Stage env';
         break;
       case 'production':
         text = 'Production env';
-        break;
-      case 'development':
-        text = 'Development env';
         break;
       case 'local':
         text = 'Local env';
