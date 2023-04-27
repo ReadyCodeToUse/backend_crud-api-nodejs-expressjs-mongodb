@@ -32,9 +32,6 @@ app.get('/', (req, res) => {
       case 'production':
         text = 'Production env';
         break;
-      case 'development':
-        text = 'Development env';
-        break;
       case 'local':
         text = 'Local env';
         break;

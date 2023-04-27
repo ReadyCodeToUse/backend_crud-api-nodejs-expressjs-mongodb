@@ -6,13 +6,10 @@ const { NODE_ENV } = process.env;
 if (NODE_ENV != null) {
   switch (NODE_ENV) {
     case 'stage':
-      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_PREPROD}:${process.env.MONGODB_PASSWORD_PREPROD}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_PREPROD}?retryWrites=true&w=majority`;
+      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_STAGE}:${process.env.MONGODB_PASSWORD_STAGE}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_STAGE}?retryWrites=true&w=majority`;
       break;
     case 'production':
       dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_PROD}:${process.env.MONGODB_PASSWORD_PROD}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_PROD}?retryWrites=true&w=majority`;
-      break;
-    case 'development':
-      dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME_DEV}:${process.env.MONGODB_PASSWORD_DEV}@cluster-ai.xepqosm.mongodb.net/${process.env.MONGODB_DATABASE_NAME_DEV}?retryWrites=true&w=majority`;
       break;
     case 'local':
       dbUrl = `mongodb://${process.env.MONGODB_USERNAME_LOCAL}:${process.env.MONGODB_PASSWORD_LOCAL}@localhost:6000/${process.env.MONGODB_DATABASE_NAME_LOCAL}?authSource=admin`;
