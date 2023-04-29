@@ -20,6 +20,7 @@ app.use('/auth', authRouter);
 app.use('/user', userRouter);
 
 app.use(ErrorHandler);
+console.log('process.env.NODE_ENV', process.env.NODE_ENV);
 
 app.get('/', (req, res) => {
   const { NODE_ENV } = process.env;
