@@ -12,7 +12,8 @@
     "start": "nodemon app.js",
     "lint": "eslint",
     "lint-fix": "eslint --fix --ext .js,.jsx .",
-    "prepare": "husky install"
+
+
   },
   "author": "Andrea Ioele",
   "dependencies": {
