@@ -5,7 +5,9 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 name: Create Release
-
+permissions:
+  contents: write
+  pull-requests: read
 jobs:
   build:
     name: Create Release
