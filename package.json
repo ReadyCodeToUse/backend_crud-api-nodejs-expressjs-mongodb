@@ -49,33 +49,33 @@
     "husky": "^8.0.0",
     "lint-staged": "^13.2.1"
   },
-  "relase-it" : {
+  "relase-it": {
     "git": {
-      "commitMessage" : "chore: release v${version}"
+      "commitMessage": "chore: release v${version}"
     },
-    "github" : {
-      "release" : true
+    "github": {
+      "release": true
     },
-    "npm" : {
-      "publish" : false
+    "npm": {
+      "publish": false
     },
-    "plugins" : {
-            "@release-it/conventional-changelog": {
-              "infile": "CHANGELOG.md",
-              "preset": {
-                "name": "conventionalcommits",
-                "types": [
-                  {
-                    "type" : "feat",
-                    "section" : "Features"
-                  },
-                  {
-                    "type" : "fix",
-                    "section": "Bug Fixes"
-                  }
-                ]
-              }
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "infile": "CHANGELOG.md",
+        "preset": {
+          "name": "conventionalcommits",
+          "types": [
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
             }
-            }
+          ]
+        }
+      }
+    }
   }
 }
