@@ -16,11 +16,8 @@
   },
   "author": "Andrea Ioele",
   "dependencies": {
-    "@commitlint/cli": "^17.6.1",
-    "@commitlint/config-conventional": "^17.6.1",
     "@logtail/node": "^0.2.2",
     "@logtail/winston": "^0.3.3",
-    "@release-it/conventional-changelog": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "config": "^3.3.9",
@@ -36,7 +33,6 @@
     "mongoose": "^7.0.1",
     "node-geocoder": "^4.2.0",
     "nodemon": "^2.0.21",
-    "release-it": "^15.10.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2",
     "winston": "^3.8.2",
@@ -48,34 +44,5 @@
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.0",
     "lint-staged": "^13.2.1"
-  },
-  "relase-it": {
-    "git": {
-      "commitMessage": "chore: release v${version}"
-    },
-    "github": {
-      "release": true
-    },
-    "npm": {
-      "publish": false
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "infile": "CHANGELOG.md",
-        "preset": {
-          "name": "conventionalcommits",
-          "types": [
-            {
-              "type": "feat",
-              "section": "Features"
-            },
-            {
-              "type": "fix",
-              "section": "Bug Fixes"
-            }
-          ]
-        }
-      }
-    }
   }
 }
