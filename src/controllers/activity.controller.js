@@ -81,3 +81,63 @@ exports.createActivity = async (req, res, next) => {
     next(error);
   });
 };
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Delete Activity
+ * @route           DELETE /activity/delete/:activityId
+ * @access          Private
+ */
+exports.deleteActivity = async (req, res, next) => {
+  req.reqId = generateRandomReqId();
+  const { user } = req;
+  const { activityId } = req.params;
+  await Activity.findOneAndDelete({
+    // eslint-disable-next-line no-underscore-dangle
+    user_id: user._id,
+    _id: activityId,
+  }).then((activity) => {
+    if (activity) {
+      successResponse(req, res, null, 'Activity deleted', activity);
+    } else {
+      successResponse(req, res, 404, 'Activity not found', activity);
+    }
+  }, (error) => {
+    next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Update Activity
+ * @route           PUT /activity/update/:activityId
+ * @access          Private
+ */
+exports.updateActivity = async (req, res, next) => {
+  req.reqId = generateRandomReqId();
+  // sanitize field schema to prevent undesirable field update (like password..)
+  const fieldToUpdate = {
+    name: req.body.name,
+    activityType: req.body.activityType,
+    activityAddress: req.body.activityAddress,
+  };
+  const { user } = req;
+  const { activityId } = req.params;
+  await Activity.findOneAndUpdate({
+    // eslint-disable-next-line no-underscore-dangle
+    user_id: user._id,
+    _id: activityId,
+  }, fieldToUpdate, { new: true }).then((activity) => {
+    if (activity) {
+      successResponse(req, res, null, 'Activity updated', activity);
+    } else {
+      successResponse(req, res, 404, 'Activity not found', activity);
+    }
+  }, (error) => {
+    next(error);
+  });
+};
