@@ -61,8 +61,7 @@ const ActivitySchema = new mongoose.Schema({
     required: true,
   },
   menus: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Menu',
+    type: Array,
     required: false,
   },
 }, { collection: 'activity' });
