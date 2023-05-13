@@ -15,10 +15,12 @@ app.use(express.json());
 const authRouter = require('./src/routes/auth.route');
 const userRouter = require('./src/routes/user.route');
 const activityRouter = require('./src/routes/activity.route');
+const menuRouter = require('./src/routes/menu.route');
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/activity', activityRouter);
+app.use('/menu', menuRouter);
 
 app.use(ErrorHandler);
 
