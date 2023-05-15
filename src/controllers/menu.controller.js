@@ -15,6 +15,7 @@ const { Menu } = require('../models/Menu.model');
 exports.createMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId } = req.params;
+  req.body.activity_id = activityId;
   // eslint-disable-next-line no-underscore-dangle
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

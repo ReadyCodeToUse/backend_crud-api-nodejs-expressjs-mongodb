@@ -87,4 +87,13 @@ ActivitySchema.pre('save', async function (next) {
   next();
 });
 
+ActivitySchema.pre('findOneAndDelete', async function (next) {
+  const MenuSchema = mongoose.model('menu');
+  console.log(`Menus being removed from activity ${this._conditions._id}`);
+  await MenuSchema.deleteMany({
+    activity_id: this._conditions._id,
+  });
+  next();
+});
+
 exports.Activity = mongoose.model('activity', ActivitySchema);
