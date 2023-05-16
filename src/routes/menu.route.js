@@ -121,7 +121,7 @@ router.route('/:activityId/create')
  *         - in: path
  *           name: menuId
  *           required: true
- *           description: The id of the menu
+ *           description: The id of the menu to delete
  *           schema:
  *             type: string
  *     responses:
