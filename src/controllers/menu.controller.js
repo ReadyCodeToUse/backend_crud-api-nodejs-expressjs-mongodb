@@ -37,3 +37,27 @@ exports.createMenu = async (req, res, next) => {
     next(error);
   });
 };
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Delete Menu
+ * @route           DELETE /menu/:activityId/delete/:menuId
+ * @access          Private
+ */
+exports.deleteMenu = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomReqId();
+  await Menu.findByIdAndDelete({ _id: menuId, activity_id: activityId }).then(async (menu) => {
+    // eslint-disable-next-line max-len
+    await Activity.findByIdAndUpdate({ _id: activityId, user: user._id }, { $pull: { menus: menu } }).then(() => {
+      successResponse(req, res, null, 'Menu deleted', menu);
+    }, (error) => {
+      next(error);
+    });
+  }, (error) => {
+    next(error);
+  });
+};
