@@ -2,6 +2,7 @@ const express = require('express');
 
 const {
   createMenu,
+  deleteMenu,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -93,5 +94,48 @@ const router = express.Router({ mergeParams: true });
  */
 router.route('/:activityId/create')
   .post(protect, createMenu);
+
+/**
+ * @swagger
+ *  /menu/:activityId/delete/:menuId:
+ *   delete:
+ *     security:
+ *       - Authentication: []
+ *     summary: Delete Menu
+ *     tags:
+ *       - Menu
+ *     description: Delete Menu
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. Menu deleted
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Menu not found
+ *       500:
+ *         description: Can't delete Menu
+ *
+ */
+router.route('/:activityId/delete/:menuId')
+  .delete(protect, deleteMenu);
 
 module.exports = router;
