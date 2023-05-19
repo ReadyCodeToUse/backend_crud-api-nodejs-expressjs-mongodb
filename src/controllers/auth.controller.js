@@ -135,7 +135,7 @@ exports.logout = async (req, res) => {
  * @access          Private
  */
 exports.getMe = async (req, res, next) => {
-  // retrieve user from request
+  // retrieve user from req
   const { user } = req;
 
   req.reqId = generateRandomReqId();
