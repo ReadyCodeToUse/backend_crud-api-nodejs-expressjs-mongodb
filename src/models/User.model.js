@@ -63,7 +63,6 @@ const UserSchema = new mongoose.Schema({
       index: true,
       minLength: 5,
       maxLength: 50,
-      immutable: true,
     },
     password: {
       type: String,
@@ -72,7 +71,6 @@ const UserSchema = new mongoose.Schema({
     isActive: {
       type: Boolean,
       default: false,
-      immutable: true,
     },
     role: {
       type: String,
@@ -81,7 +79,6 @@ const UserSchema = new mongoose.Schema({
         message: '{VALUE} is not supported',
       },
       required: true,
-      immutable: true,
     },
   },
   address: {

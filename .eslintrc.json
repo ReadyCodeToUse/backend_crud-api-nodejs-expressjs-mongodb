@@ -11,5 +11,7 @@
         "ecmaVersion": "latest"
     },
     "rules": {
+        "eslint-disable-next-line" : "off",
+        "no-underscore-dangle" : "off"
     }
 }
