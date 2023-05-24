@@ -3,6 +3,7 @@ const express = require('express');
 const {
   createMenu,
   deleteMenu,
+  getAllMenus,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -138,4 +139,40 @@ router.route('/:activityId/create')
 router.route('/:activityId/delete/:menuId')
   .delete(protect, deleteMenu);
 
+/**
+ * @swagger
+ *  /menu/:activityId/all:
+ *   get:
+ *     security:
+ *       - Authentication: []
+ *     summary: Get all Menus from current activity
+ *     tags:
+ *       - Menu
+ *     description: Get all Menus from current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. Menu fetched
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Menu not found
+ *       500:
+ *         description: Can't retrieve menus
+ *
+ */
+router.route('/:activityId/all')
+  .get(protect, getAllMenus);
 module.exports = router;
