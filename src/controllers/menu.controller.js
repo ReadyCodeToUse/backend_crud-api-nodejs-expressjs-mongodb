@@ -81,8 +81,8 @@ exports.deleteMenu = async (req, res, next) => {
  * @param req
  * @param res
  * @param next
- * @description     Get all Menus from qctivity
- * @route           POST /menu/:activityId/create
+ * @description     Get all Menus from activity
+ * @route           GET /menu/:activityId/all
  * @access          Private
  */
 exports.getAllMenus = async (req, res, next) => {
@@ -94,6 +94,33 @@ exports.getAllMenus = async (req, res, next) => {
     user_id: user._id,
   }).then((menus) => {
     successResponse(req, res, null, 'Menus fetched', menus);
+  }, (error) => {
+    next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Get Single Menu by id
+ * @route           GET /menu/:activityId/single/:menuId
+ * @access          Private
+ */
+exports.getSingleMenu = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomReqId();
+  await Menu.find({
+    _id: menuId,
+    activity_id: activityId,
+    user_id: user._id,
+  }).then((menu) => {
+    if (menu === null || menu.length === 0) {
+      successResponse(req, res, 404, 'Menu not found', {});
+    } else {
+      successResponse(req, res, null, 'Menu fetched', menu);
+    }
   }, (error) => {
     next(error);
   });
