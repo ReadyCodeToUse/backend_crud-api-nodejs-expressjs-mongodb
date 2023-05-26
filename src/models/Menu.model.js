@@ -37,6 +37,11 @@ const MenuSchema = new mongoose.Schema({
     ref: 'Activity',
     required: true,
   },
+  user_id: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true,
+  },
   name: {
     type: String,
     required: ['Menu name is required'],
