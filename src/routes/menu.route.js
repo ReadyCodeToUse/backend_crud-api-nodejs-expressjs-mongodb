@@ -5,6 +5,7 @@ const {
   deleteMenu,
   getAllMenus,
   getSingleMenu,
+  updateMenu,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -219,4 +220,65 @@ router.route('/:activityId/all')
  */
 router.route('/:activityId/single/:menuId')
   .get(protect, getSingleMenu);
+
+/**
+ * @swagger
+ *  /menu/:activityId/update/:menuId:
+ *   put:
+ *     security:
+ *       - Authentication: []
+ *     summary: Update Menu from current activity
+ *     tags:
+ *       - Menu
+ *     description: Update Menu from current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   description: The name of the menu
+ *                   example: "New Menu"
+ *                   required: false
+ *                 description:
+ *                   type: string
+ *                   description: The description of the menu
+ *                   example: "New Menu Description"
+ *                   required: false
+ *     responses:
+ *       200:
+ *         description: Success. Menu fetched
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Menu not found
+ *       500:
+ *         description: Can't retrieve menu
+ *
+ */
+router.route('/:activityId/update/:menuId')
+  .put(protect, updateMenu);
+
 module.exports = router;

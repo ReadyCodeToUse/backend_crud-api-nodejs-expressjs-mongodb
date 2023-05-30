@@ -125,3 +125,41 @@ exports.getSingleMenu = async (req, res, next) => {
     next(error);
   });
 };
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Update Menu Data
+ * @route           PUT /menu/:activityId/update/:menuId
+ * @access          Private
+ */
+exports.updateMenu = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomReqId();
+
+  const fieldsToUpdate = {
+    name: req.body.name,
+    description: req.body.description,
+  };
+  await Menu.findOneAndUpdate({
+    _id: menuId,
+    user_id: user._id,
+  }, fieldsToUpdate, { new: true }).then(async (menu) => {
+    if (menu === null) {
+      successResponse(req, res, 404, 'Menu not found', {});
+    } else {
+      await Activity.findOneAndUpdate({
+        _id: activityId,
+        user_id: user._id,
+      }, { $set: { menus: menu } }).then(() => {
+        successResponse(req, res, null, 'Menu updated', menu);
+      }, (error) => {
+        next(error);
+      });
+    }
+  }, (error) => {
+    next(error);
+  });
+};
