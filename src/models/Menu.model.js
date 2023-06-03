@@ -9,13 +9,11 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     minLength: 5,
     maxLength: 500,
-    default: '',
-    required: false,
+    required: ['Item description is required'],
   },
   itemImage: {
     type: String,
-    default: '',
-    required: false,
+    required: ['Item image is required'],
   },
   category: {
     type: String,

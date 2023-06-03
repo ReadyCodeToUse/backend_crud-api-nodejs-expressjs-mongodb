@@ -6,6 +6,7 @@ const {
   getAllMenus,
   getSingleMenu,
   updateMenu,
+  updateSingleMenuItem,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -224,7 +225,7 @@ router.route('/:activityId/single/:menuId')
 /**
  * @swagger
  *  /menu/:activityId/update/:menuId:
- *   put:
+ *   patch:
  *     security:
  *       - Authentication: []
  *     summary: Update Menu from current activity
@@ -279,6 +280,87 @@ router.route('/:activityId/single/:menuId')
  *
  */
 router.route('/:activityId/update/:menuId')
-  .put(protect, updateMenu);
+  .patch(protect, updateMenu);
+
+/**
+ * @swagger
+ *  /menu/:activityId/update/:menuId/item/:itemId:
+ *   patch:
+ *     security:
+ *       - Authentication: []
+ *     summary: Update Menu item from current activity
+ *     tags:
+ *       - Menu
+ *     description: Update Menu item from current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: itemId
+ *           required: true
+ *           description: The id of the item
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 itemName:
+ *                   type: string
+ *                   description: The name of the item
+ *                   example: "Item name"
+ *                   required: false
+ *                 itemDescription:
+ *                   type: string
+ *                   description: The description of the item
+ *                   example: "New item Description"
+ *                   required: false
+ *                 itemImage:
+ *                   type: string
+ *                   description: The image of the item
+ *                   example: "https://www.google.com/image.png"
+ *                   required: false
+ *                 category:
+ *                   type: string
+ *                   description: The category of the item
+ *                   example: "primo"
+ *                   required: false
+ *                 itemPrice:
+ *                   type: string
+ *                   description: The price of the item
+ *                   example: "10"
+ *                   required: false
+ *     responses:
+ *       200:
+ *         description: Success. Menu item updated
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Item not found
+ *       500:
+ *         description: Can't retrieve item
+ *
+ */
+router.route('/:activityId/update/:menuId/item/:itemId')
+  .patch(protect, updateSingleMenuItem);
 
 module.exports = router;
