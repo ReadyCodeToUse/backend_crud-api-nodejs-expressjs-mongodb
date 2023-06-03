@@ -3,6 +3,7 @@ const { generateRandomReqId } = require('../../utils/reqId');
 const { Activity } = require('../models/Activity.model');
 const successResponse = require('../../utils/successResponse');
 const { Menu } = require('../models/Menu.model');
+const getAvailableCategory = require('../../utils/menu/getAvailableCategory');
 /**
  * @param req
  * @param res
@@ -159,6 +160,83 @@ exports.updateMenu = async (req, res, next) => {
         next(error);
       });
     }
+  }, (error) => {
+    next(error);
+  });
+};
+/*
+const getAvailableCategory = async (activtyId, menuId, userId, next) => {
+  const response = await Menu.findOne({
+    _id: menuId,
+    user_id: userId,
+    activity_id: activtyId,
+  }, {
+    itemCustomCategoryList: 1,
+    // eslint-disable-next-line consistent-return
+  }).then((menu) => {
+    // eslint-disable-next-line array-callback-return
+
+    const itemCustomCategoryListValue = menu.itemCustomCategoryList.map((item) => item.category);
+    return itemCustomCategoryListValue;
+  }, (error) => {
+    next(error);
+  });
+  return response;
+};
+
+ */
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Edit Single Menu item
+ * @route           PUT /menu/:activityId/update/:menuId/item/:itemId
+ */
+// eslint-disable-next-line consistent-return
+exports.updateSingleMenuItem = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId, itemId } = req.params;
+  req.reqId = generateRandomReqId();
+
+  if (req.body.category) {
+    const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
+    console.log(itemCustomCategoryList);
+
+    if (!itemCustomCategoryList.includes(req.body.category)) {
+      return successResponse(req, res, 404, `Category not available for this Activity . Please choose from ${itemCustomCategoryList}`, {});
+    }
+  }
+
+  const fieldsToUpdate = {
+    itemName: req.body.itemName,
+    itemDescription: req.body.itemDescription,
+    itemImage: req.body.itemImage,
+    category: req.body.category,
+    itemPrice: req.body.itemPrice,
+  };
+  await Menu.findOneAndUpdate(
+    {
+      _id: menuId,
+      user_id: user._id,
+      activity_id: activityId,
+      items: { $elemMatch: { _id: itemId } },
+    },
+    {
+      $set: {
+        'items.$.itemName': fieldsToUpdate.itemName,
+        'items.$.itemDescription': fieldsToUpdate.itemDescription,
+        'items.$.itemImage': fieldsToUpdate.itemImage,
+        'items.$.category': fieldsToUpdate.category,
+        'items.$.itemPrice': fieldsToUpdate.itemPrice,
+      },
+    },
+    {
+      // arrayFilters: [{ 'item._id': itemId }],
+      returnOriginal: false,
+    },
+  ).then(async (menu) => {
+    successResponse(req, res, null, 'Menu item updated', menu);
   }, (error) => {
     next(error);
   });
