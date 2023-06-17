@@ -88,8 +88,10 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
+const apiDocs = '/api-docs';
 app.use(
-  '/api-docs',
+  apiDocs,
   swaggerUi.serve,
   swaggerUi.setup(specs),
 );
+console.log(`Swagger docs available at http://localhost:${process.env.SERVER_PORT}${apiDocs}`);
