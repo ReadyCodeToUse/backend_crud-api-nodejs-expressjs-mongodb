@@ -7,6 +7,7 @@ const {
   getSingleMenu,
   updateMenu,
   updateSingleMenuItem,
+  deleteSingleMenuItem,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -362,5 +363,54 @@ router.route('/:activityId/update/:menuId')
  */
 router.route('/:activityId/update/:menuId/item/:itemId')
   .patch(protect, updateSingleMenuItem);
+
+/**
+ * @swagger
+ *  /menu/:activityId/delete/:menuId/item/:itemId:
+ *   delete:
+ *     security:
+ *       - Authentication: []
+ *     summary: Delete Menu item from current activity
+ *     tags:
+ *       - Menu
+ *     description: Delete Menu item from current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: itemId
+ *           required: true
+ *           description: The id of the item
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. Menu item deleted
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Menu Item not found
+ *       500:
+ *         description: Can't retrieve item
+ *
+ */
+router.route('/:activityId/delete/:menuId/item/:itemId')
+  .delete(protect, deleteSingleMenuItem);
 
 module.exports = router;
