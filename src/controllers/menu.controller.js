@@ -164,27 +164,6 @@ exports.updateMenu = async (req, res, next) => {
     next(error);
   });
 };
-/*
-const getAvailableCategory = async (activtyId, menuId, userId, next) => {
-  const response = await Menu.findOne({
-    _id: menuId,
-    user_id: userId,
-    activity_id: activtyId,
-  }, {
-    itemCustomCategoryList: 1,
-    // eslint-disable-next-line consistent-return
-  }).then((menu) => {
-    // eslint-disable-next-line array-callback-return
-
-    const itemCustomCategoryListValue = menu.itemCustomCategoryList.map((item) => item.category);
-    return itemCustomCategoryListValue;
-  }, (error) => {
-    next(error);
-  });
-  return response;
-};
-
- */
 
 /**
  * @param req
@@ -192,6 +171,7 @@ const getAvailableCategory = async (activtyId, menuId, userId, next) => {
  * @param next
  * @description     Edit Single Menu item
  * @route           PUT /menu/:activityId/update/:menuId/item/:itemId
+ * @access          Private
  */
 // eslint-disable-next-line consistent-return
 exports.updateSingleMenuItem = async (req, res, next) => {
@@ -237,6 +217,38 @@ exports.updateSingleMenuItem = async (req, res, next) => {
     },
   ).then(async (menu) => {
     successResponse(req, res, null, 'Menu item updated', menu);
+  }, (error) => {
+    next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Delete Single Menu item
+ * @route           DELETE /menu/:activityId/delete/:menuId/item/:itemId
+ * @access          Private
+ */
+exports.deleteSingleMenuItem = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId, itemId } = req.params;
+  req.reqId = generateRandomReqId();
+  await Menu.findOneAndUpdate(
+    {
+      _id: menuId,
+      user_id: user._id,
+      activity_id: activityId,
+      items: { $elemMatch: { _id: itemId } },
+    },
+    { $pull: { items: { _id: itemId } } },
+    { returnOriginal: false },
+  ).then(async (menu) => {
+    if (menu === null) {
+      successResponse(req, res, 404, 'Menu item not found', {});
+    } else {
+      successResponse(req, res, null, 'Menu item deleted', menu);
+    }
   }, (error) => {
     next(error);
   });
