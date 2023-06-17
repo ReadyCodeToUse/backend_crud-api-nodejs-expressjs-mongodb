@@ -253,3 +253,51 @@ exports.deleteSingleMenuItem = async (req, res, next) => {
     next(error);
   });
 };
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Create Single Menu item
+ * @route           POST /menu/:activityId/create/:menuId/item
+ * @access          Private
+ */
+exports.createSingleMenuItem = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomReqId();
+
+  if (req.body.category) {
+    const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
+    console.log(itemCustomCategoryList);
+
+    if (!itemCustomCategoryList.includes(req.body.category)) {
+      return successResponse(req, res, 404, `Category not available for this Activity . Please choose from ${itemCustomCategoryList}`, {});
+    }
+  }
+
+  const fieldsToUpdate = {
+    itemName: req.body.itemName,
+    itemDescription: req.body.itemDescription,
+    itemImage: req.body.itemImage,
+    category: req.body.category,
+    itemPrice: req.body.itemPrice,
+  };
+  await Menu.findOneAndUpdate(
+    {
+      _id: menuId,
+      user_id: user._id,
+      activity_id: activityId,
+    },
+    { $push: { items: fieldsToUpdate } },
+    { returnOriginal: false },
+  ).then(async (menu) => {
+    if (menu === null) {
+      successResponse(req, res, 404, 'Menu item not found', {});
+    } else {
+      successResponse(req, res, null, 'Menu item created', menu);
+    }
+  }, (error) => {
+    next(error);
+  });
+};

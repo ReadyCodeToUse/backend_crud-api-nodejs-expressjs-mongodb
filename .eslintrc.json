@@ -12,6 +12,7 @@
     },
     "rules": {
         "eslint-disable-next-line" : "off",
-        "no-underscore-dangle" : "off"
+        "no-underscore-dangle" : "off",
+        "consistent-return": "off"
     }
 }
