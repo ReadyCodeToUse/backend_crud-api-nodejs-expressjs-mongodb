@@ -8,6 +8,7 @@ const {
   updateMenu,
   updateSingleMenuItem,
   deleteSingleMenuItem,
+  createSingleMenuItem,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -412,5 +413,79 @@ router.route('/:activityId/update/:menuId/item/:itemId')
  */
 router.route('/:activityId/delete/:menuId/item/:itemId')
   .delete(protect, deleteSingleMenuItem);
+
+/**
+ * @swagger
+ * /:activityId/delete/:menuId/item:
+ *   post:
+ *     security:
+ *       - Authentication: []
+ *     summary: Create new Menu item for current activity
+ *     tags:
+ *       - Menu
+ *     description: Create new Menu item for current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                  itemName:
+ *                      type: string
+ *                      description: The name of the item
+ *                  itemDescription:
+ *                      type: string
+ *                      description: The description of the item
+ *                  itemImage:
+ *                      type: string
+ *                      description: The image of the item
+ *                  itemPrice:
+ *                      type: string
+ *                      description: The price of the item
+ *                  category:
+ *                      type: string
+ *                      description: The category of the item
+ *                  show:
+ *                      type: boolean
+ *                      description: The show of the item
+ *               required:
+ *                 - itemName
+ *                 - itemDescription
+ *                 - itemImage
+ *                 - itemPrice
+ *                 - category
+ *     responses:
+ *       200:
+ *         description: Success. Menu item crated
+ *       400:
+ *         description: Failed. Some fields not supported
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       500:
+ *         description: Failed. Can't create item
+ *
+ */
+router.route('/:activityId/create/:menuId/item')
+  .post(protect, createSingleMenuItem);
 
 module.exports = router;
