@@ -9,6 +9,7 @@ const {
   updateSingleMenuItem,
   deleteSingleMenuItem,
   createSingleMenuItem,
+  uploadMenuFile,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -487,5 +488,8 @@ router.route('/:activityId/delete/:menuId/item/:itemId')
  */
 router.route('/:activityId/create/:menuId/item')
   .post(protect, createSingleMenuItem);
+
+router.route('/:activityId/upload/:menuId/')
+  .post(protect, uploadMenuFile);
 
 module.exports = router;
