@@ -3,7 +3,7 @@ const moment = require('moment');
 const { User } = require('../models/User.model');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../../utils/errorResponse');
-const { generateRandomReqId } = require('../../utils/reqId');
+const { generateRandomReqId } = require('../../utils/generateRandomId');
 
 const config = process.env;
 

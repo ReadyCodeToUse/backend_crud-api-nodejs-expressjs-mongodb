@@ -66,6 +66,10 @@ const MenuSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  menuUrl: {
+    type: String,
+    required: false,
+  },
   show: {
     type: Boolean,
     default: true,
