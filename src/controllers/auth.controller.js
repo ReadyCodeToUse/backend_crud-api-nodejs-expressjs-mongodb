@@ -6,7 +6,7 @@ const { authLogger } = require('../../utils/logger');
 // const env = process.env.NODE_ENV || "prod";
 
 const { User } = require('../models/User.model');
-const { generateRandomReqId } = require('../../utils/reqId');
+const { generateRandomId } = require('../../utils/generateRandomId');
 
 const ErrorResponse = require('../../utils/errorResponse');
 
@@ -39,7 +39,7 @@ const sendTokenResponse = (req, res, user, customMessage) => {
 exports.registerUser = (async (req, res, next) => {
   const errors = validationResult(req);
   req.body.loginData.isActive = 0;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -71,7 +71,7 @@ exports.loginUser = ([
   check('password', 'Password is required').notEmpty(),
 // eslint-disable-next-line consistent-return
 ], async (req, res, next) => {
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -118,7 +118,7 @@ exports.loginUser = ([
  * @access          Private
  */
 exports.logout = async (req, res) => {
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -138,7 +138,7 @@ exports.getMe = async (req, res, next) => {
   // retrieve user from request
   const { user } = req;
 
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   // eslint-disable-next-line no-underscore-dangle
   User.findById(user._id).then((userData) => {
     successResponse(req, res, null, 'User correctly retrieved', userData);
@@ -157,7 +157,7 @@ exports.getMe = async (req, res, next) => {
  */
 // eslint-disable-next-line consistent-return
 exports.updatePassword = async (req, res, next) => {
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   // get user password from logged user (field in request)
   // eslint-disable-next-line no-underscore-dangle

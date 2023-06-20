@@ -4,7 +4,7 @@ const successResponse = require('../../utils/successResponse');
 // const env = process.env.NODE_ENV || "prod";
 
 const { User } = require('../models/User.model');
-const { generateRandomReqId } = require('../../utils/reqId');
+const { generateRandomId } = require('../../utils/generateRandomId');
 
 /**
  * @param req
@@ -15,7 +15,7 @@ const { generateRandomReqId } = require('../../utils/reqId');
  * @access          Public
  */
 exports.getAllUsers = async (req, res, next) => {
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await User.find().then((user) => {
     if (user) {
       successResponse(req, res, null, 'Users retrieved', user, false);
@@ -46,7 +46,7 @@ exports.updateCurrentUserData = async (req, res, next) => {
     address: req.body.address,
   };
 
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   // eslint-disable-next-line no-underscore-dangle
   const userId = req.user._id.toString();

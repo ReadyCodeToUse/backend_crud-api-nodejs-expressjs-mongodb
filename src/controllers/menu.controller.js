@@ -5,7 +5,7 @@ const {
 // eslint-disable-next-line import/no-extraneous-dependencies
 } = require('@aws-sdk/client-s3');
 
-const { generateRandomReqId } = require('../../utils/reqId');
+const { generateRandomId } = require('../../utils/generateRandomId');
 const { Activity } = require('../models/Activity.model');
 const successResponse = require('../../utils/successResponse');
 const { Menu } = require('../models/Menu.model');
@@ -38,7 +38,7 @@ exports.createMenu = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   await Menu.create(req.body).then(async (menu) => {
     // eslint-disable-next-line no-underscore-dangle
@@ -70,7 +70,7 @@ exports.createMenu = async (req, res, next) => {
 exports.deleteMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.findOneAndDelete({
     _id: menuId,
     activity_id: activityId,
@@ -104,7 +104,7 @@ exports.deleteMenu = async (req, res, next) => {
 exports.getAllMenus = async (req, res, next) => {
   const { user } = req;
   const { activityId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.find({
     activity_id: activityId,
     user_id: user._id,
@@ -126,7 +126,7 @@ exports.getAllMenus = async (req, res, next) => {
 exports.getSingleMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.find({
     _id: menuId,
     activity_id: activityId,
@@ -153,7 +153,7 @@ exports.getSingleMenu = async (req, res, next) => {
 exports.updateMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   const fieldsToUpdate = {
     name: req.body.name,
@@ -192,7 +192,7 @@ exports.updateMenu = async (req, res, next) => {
 exports.updateSingleMenuItem = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId, itemId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   if (req.body.category) {
     const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
@@ -247,7 +247,7 @@ exports.updateSingleMenuItem = async (req, res, next) => {
 exports.deleteSingleMenuItem = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId, itemId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.findOneAndUpdate(
     {
       _id: menuId,
@@ -279,7 +279,7 @@ exports.deleteSingleMenuItem = async (req, res, next) => {
 exports.createSingleMenuItem = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   if (req.body.category) {
     const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
@@ -314,22 +314,32 @@ exports.createSingleMenuItem = async (req, res, next) => {
   });
 };
 
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Upload Menu File
+ * @route           POST /menu/:activityId/upload/:menuId/
+ * @access          Private
+ */
 exports.uploadMenuFile = async (req, res, next) => {
-  // menu and activity exists
-
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   await Menu.find({
     _id: menuId,
     user_id: user._id,
     activity_id: activityId,
   }, { _id: 1 }).then(async (response) => {
+    // menu and activity exists
     if (response.length > 0) {
+      const uniqueMenuId = generateRandomId();
+
       const file = req.files;
       const fileType = req.files.files.mimetype;
-      const fileName = `${process.env.AWS_S3_BUCKET_SUBFOLDER + req.reqId}.pdf`;
+      const fileName = `${process.env.AWS_S3_BUCKET_SUBFOLDER + uniqueMenuId}.pdf`;
+
       if (fileType !== 'application/pdf') {
         return successResponse(req, res, 400, 'Only pdf file is allowed', {});
       }
