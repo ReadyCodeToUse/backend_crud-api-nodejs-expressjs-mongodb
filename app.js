@@ -3,10 +3,13 @@ require('dotenv').config();
 const time = require('express-timestamp');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const fileUpload = require('express-fileupload');
 const connectDB = require('./utils/connectDB');
 const ErrorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
+
+app.use(fileUpload());
 
 app.use(time.init);
 
