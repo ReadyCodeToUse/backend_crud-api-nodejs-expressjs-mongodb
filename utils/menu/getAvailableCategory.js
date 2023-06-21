@@ -7,7 +7,6 @@ const getAvailableCategory = async (activtyId, menuId, userId, next) => {
     activity_id: activtyId,
   }, {
     itemCustomCategoryList: 1,
-    // eslint-disable-next-line consistent-return
   }).then((menu) => {
     // eslint-disable-next-line array-callback-return
 
