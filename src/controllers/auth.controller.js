@@ -35,7 +35,6 @@ const sendTokenResponse = (req, res, user, customMessage) => {
  * @route           POST /auth/register
  * @access          Public
  */
-// eslint-disable-next-line consistent-return
 exports.registerUser = (async (req, res, next) => {
   const errors = validationResult(req);
   req.body.loginData.isActive = 0;
@@ -69,7 +68,6 @@ exports.registerUser = (async (req, res, next) => {
 exports.loginUser = ([
   check('email', 'Email is required').notEmpty(),
   check('password', 'Password is required').notEmpty(),
-// eslint-disable-next-line consistent-return
 ], async (req, res, next) => {
   req.reqId = generateRandomId();
   const errors = validationResult(req);
@@ -155,7 +153,6 @@ exports.getMe = async (req, res, next) => {
  * @route           PUT /auth/updatepassword
  * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.updatePassword = async (req, res, next) => {
   req.reqId = generateRandomId();
 
