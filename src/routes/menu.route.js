@@ -7,6 +7,9 @@ const {
   getSingleMenu,
   updateMenu,
   updateSingleMenuItem,
+  deleteSingleMenuItem,
+  createSingleMenuItem,
+  uploadMenuFile,
 } = require('../controllers/menu.controller');
 
 const { protect } = require('../middleware/auth');
@@ -55,6 +58,9 @@ const router = express.Router({ mergeParams: true });
  *                 isDynamic:
  *                    type: boolean
  *                    description: Check true if domain is dynamic and can change
+ *                 menuUrl:
+ *                    type: string
+ *                    description: The menu url created from s3 upload
  *                 show:
  *                    type: boolean
  *                    description: Check if show the menu
@@ -362,5 +368,171 @@ router.route('/:activityId/update/:menuId')
  */
 router.route('/:activityId/update/:menuId/item/:itemId')
   .patch(protect, updateSingleMenuItem);
+
+/**
+ * @swagger
+ *  /menu/:activityId/delete/:menuId/item/:itemId:
+ *   delete:
+ *     security:
+ *       - Authentication: []
+ *     summary: Delete Menu item from current activity
+ *     tags:
+ *       - Menu
+ *     description: Delete Menu item from current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: itemId
+ *           required: true
+ *           description: The id of the item
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. Menu item deleted
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       404:
+ *         description: Failed. Menu Item not found
+ *       500:
+ *         description: Can't retrieve item
+ *
+ */
+router.route('/:activityId/delete/:menuId/item/:itemId')
+  .delete(protect, deleteSingleMenuItem);
+
+/**
+ * @swagger
+ * /:activityId/delete/:menuId/item:
+ *   post:
+ *     security:
+ *       - Authentication: []
+ *     summary: Create new Menu item for current activity
+ *     tags:
+ *       - Menu
+ *     description: Create new Menu item for current activity
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                  itemName:
+ *                      type: string
+ *                      description: The name of the item
+ *                  itemDescription:
+ *                      type: string
+ *                      description: The description of the item
+ *                  itemImage:
+ *                      type: string
+ *                      description: The image of the item
+ *                  itemPrice:
+ *                      type: string
+ *                      description: The price of the item
+ *                  category:
+ *                      type: string
+ *                      description: The category of the item
+ *                  show:
+ *                      type: boolean
+ *                      description: The show of the item
+ *               required:
+ *                 - itemName
+ *                 - itemDescription
+ *                 - itemImage
+ *                 - itemPrice
+ *                 - category
+ *     responses:
+ *       200:
+ *         description: Success. Menu item crated
+ *       400:
+ *         description: Failed. Some fields not supported
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       500:
+ *         description: Failed. Can't create item
+ *
+ */
+router.route('/:activityId/create/:menuId/item')
+  .post(protect, createSingleMenuItem);
+
+/**
+ * @swagger
+ * /:activityId/upload/:menuId:
+ *   post:
+ *     security:
+ *       - Authentication: []
+ *     summary: Upload menu pdf file to s3 bucket
+ *     tags:
+ *       - Menu
+ *     description: Upload menu pdf file to s3 bucket
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: activityId
+ *           required: true
+ *           description: The id of the activity
+ *           schema:
+ *             type: string
+ *         - in: path
+ *           name: menuId
+ *           required: true
+ *           description: The id of the menu
+ *           schema:
+ *             type: string
+ *     responses:
+ *       200:
+ *         description: Success. Uploaded menu pdf file to s3 bucket
+ *       400:
+ *         description: Failed. Not uploaded to s3 bucket
+ *       401:
+ *         description: Unauthorized. User not logged in
+ *       500:
+ *         description: Failed. Can't upload menu pdf file to s3 bucket
+ *
+ */
+router.route('/:activityId/upload/:menuId')
+  .post(protect, uploadMenuFile);
 
 module.exports = router;

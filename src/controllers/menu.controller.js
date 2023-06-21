@@ -1,9 +1,24 @@
 const { validationResult } = require('express-validator');
-const { generateRandomReqId } = require('../../utils/reqId');
+const {
+  S3Client,
+  PutObjectCommand,
+// eslint-disable-next-line import/no-extraneous-dependencies
+} = require('@aws-sdk/client-s3');
+
+const { generateRandomId } = require('../../utils/generateRandomId');
 const { Activity } = require('../models/Activity.model');
 const successResponse = require('../../utils/successResponse');
 const { Menu } = require('../models/Menu.model');
 const getAvailableCategory = require('../../utils/menu/getAvailableCategory');
+
+const s3Config = {
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_ACCESS_SECRET,
+  region: 'us-east-1',
+};
+
+const s3Client = new S3Client(s3Config);
+
 /**
  * @param req
  * @param res
@@ -12,7 +27,6 @@ const getAvailableCategory = require('../../utils/menu/getAvailableCategory');
  * @route           POST /menu/:activityId/create
  * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.createMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId } = req.params;
@@ -23,7 +37,7 @@ exports.createMenu = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   await Menu.create(req.body).then(async (menu) => {
     // eslint-disable-next-line no-underscore-dangle
@@ -55,7 +69,7 @@ exports.createMenu = async (req, res, next) => {
 exports.deleteMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.findOneAndDelete({
     _id: menuId,
     activity_id: activityId,
@@ -89,7 +103,7 @@ exports.deleteMenu = async (req, res, next) => {
 exports.getAllMenus = async (req, res, next) => {
   const { user } = req;
   const { activityId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.find({
     activity_id: activityId,
     user_id: user._id,
@@ -111,7 +125,7 @@ exports.getAllMenus = async (req, res, next) => {
 exports.getSingleMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
   await Menu.find({
     _id: menuId,
     activity_id: activityId,
@@ -138,7 +152,7 @@ exports.getSingleMenu = async (req, res, next) => {
 exports.updateMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   const fieldsToUpdate = {
     name: req.body.name,
@@ -164,27 +178,6 @@ exports.updateMenu = async (req, res, next) => {
     next(error);
   });
 };
-/*
-const getAvailableCategory = async (activtyId, menuId, userId, next) => {
-  const response = await Menu.findOne({
-    _id: menuId,
-    user_id: userId,
-    activity_id: activtyId,
-  }, {
-    itemCustomCategoryList: 1,
-    // eslint-disable-next-line consistent-return
-  }).then((menu) => {
-    // eslint-disable-next-line array-callback-return
-
-    const itemCustomCategoryListValue = menu.itemCustomCategoryList.map((item) => item.category);
-    return itemCustomCategoryListValue;
-  }, (error) => {
-    next(error);
-  });
-  return response;
-};
-
- */
 
 /**
  * @param req
@@ -192,16 +185,15 @@ const getAvailableCategory = async (activtyId, menuId, userId, next) => {
  * @param next
  * @description     Edit Single Menu item
  * @route           PUT /menu/:activityId/update/:menuId/item/:itemId
+ * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.updateSingleMenuItem = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId, itemId } = req.params;
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   if (req.body.category) {
     const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
-    console.log(itemCustomCategoryList);
 
     if (!itemCustomCategoryList.includes(req.body.category)) {
       return successResponse(req, res, 404, `Category not available for this Activity . Please choose from ${itemCustomCategoryList}`, {});
@@ -239,5 +231,149 @@ exports.updateSingleMenuItem = async (req, res, next) => {
     successResponse(req, res, null, 'Menu item updated', menu);
   }, (error) => {
     next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Delete Single Menu item
+ * @route           DELETE /menu/:activityId/delete/:menuId/item/:itemId
+ * @access          Private
+ */
+exports.deleteSingleMenuItem = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId, itemId } = req.params;
+  req.reqId = generateRandomId();
+  await Menu.findOneAndUpdate(
+    {
+      _id: menuId,
+      user_id: user._id,
+      activity_id: activityId,
+      items: { $elemMatch: { _id: itemId } },
+    },
+    { $pull: { items: { _id: itemId } } },
+    { returnOriginal: false },
+  ).then(async (menu) => {
+    if (menu === null) {
+      successResponse(req, res, 404, 'Menu item not found', {});
+    } else {
+      successResponse(req, res, null, 'Menu item deleted', menu);
+    }
+  }, (error) => {
+    next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Create Single Menu item
+ * @route           POST /menu/:activityId/create/:menuId/item
+ * @access          Private
+ */
+exports.createSingleMenuItem = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomId();
+
+  if (req.body.category) {
+    const itemCustomCategoryList = await getAvailableCategory(activityId, menuId, user._id, next);
+    if (!itemCustomCategoryList.includes(req.body.category)) {
+      return successResponse(req, res, 404, `Category not available for this Activity . Please choose from ${itemCustomCategoryList}`, {});
+    }
+  }
+
+  const fieldsToUpdate = {
+    itemName: req.body.itemName,
+    itemDescription: req.body.itemDescription,
+    itemImage: req.body.itemImage,
+    category: req.body.category,
+    itemPrice: req.body.itemPrice,
+  };
+  await Menu.findOneAndUpdate(
+    {
+      _id: menuId,
+      user_id: user._id,
+      activity_id: activityId,
+    },
+    { $push: { items: fieldsToUpdate } },
+    { returnOriginal: false },
+  ).then(async (menu) => {
+    if (menu === null) {
+      successResponse(req, res, 404, 'Menu item not found', {});
+    } else {
+      successResponse(req, res, null, 'Menu item created', menu);
+    }
+  }, (error) => {
+    next(error);
+  });
+};
+
+/**
+ * @param req
+ * @param res
+ * @param next
+ * @description     Upload Menu File
+ * @route           POST /menu/:activityId/upload/:menuId/
+ * @access          Private
+ */
+exports.uploadMenuFile = async (req, res, next) => {
+  const { user } = req;
+  const { activityId, menuId } = req.params;
+  req.reqId = generateRandomId();
+
+  await Menu.find({
+    _id: menuId,
+    user_id: user._id,
+    activity_id: activityId,
+  }, { _id: 1 }).then(async (response) => {
+    // menu and activity exists
+    if (response.length > 0) {
+      const uniqueMenuId = generateRandomId();
+
+      const file = req.files;
+      const fileType = req.files.files.mimetype;
+      const fileName = `${process.env.AWS_S3_BUCKET_SUBFOLDER + uniqueMenuId}.pdf`;
+
+      if (fileType !== 'application/pdf') {
+        return successResponse(req, res, 400, 'Only pdf file is allowed', {});
+      }
+
+      const bucketParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: fileName,
+        Body: file.files.data,
+        ContentType: 'application/pdf',
+        ContentDisposition: 'inline',
+      };
+      try {
+        await s3Client.send(new PutObjectCommand(bucketParams)).then((awsResponse) => {
+          if (awsResponse.$metadata.httpStatusCode === 200) {
+            Menu.findOneAndUpdate({
+              _id: menuId,
+              user_id: user._id,
+              activity_id: activityId,
+            }, { $set: { menuUrl: fileName } }, { returnOriginal: false }).then((menu) => {
+              if (menu === null) {
+                successResponse(req, res, 404, 'Menu not found', {});
+              } else {
+                successResponse(req, res, null, 'Menu file uploaded', menu);
+              }
+            }, (error) => {
+              next(error);
+            });
+          } else {
+            return successResponse(req, res, 500, 'Internal server error', {});
+          }
+        });
+      } catch (err) {
+        return successResponse(req, res, 500, 'Internal server error', {});
+      }
+    } else {
+      return successResponse(req, res, 404, 'Menu not found', {});
+    }
   });
 };
