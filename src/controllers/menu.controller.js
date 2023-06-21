@@ -27,7 +27,6 @@ const s3Client = new S3Client(s3Config);
  * @route           POST /menu/:activityId/create
  * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.createMenu = async (req, res, next) => {
   const { user } = req;
   const { activityId } = req.params;
@@ -188,7 +187,6 @@ exports.updateMenu = async (req, res, next) => {
  * @route           PUT /menu/:activityId/update/:menuId/item/:itemId
  * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.updateSingleMenuItem = async (req, res, next) => {
   const { user } = req;
   const { activityId, menuId, itemId } = req.params;
