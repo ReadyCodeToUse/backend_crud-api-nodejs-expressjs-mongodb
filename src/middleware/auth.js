@@ -55,7 +55,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
 });
 
 // Grant access to specific roles
-// eslint-disable-next-line consistent-return
 exports.authorize = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user.loginData.role)) {
     return next(

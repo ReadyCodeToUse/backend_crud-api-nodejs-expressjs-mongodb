@@ -68,7 +68,6 @@ exports.getSingleActivity = async (req, res, next) => {
  * @route           POST /activity/create
  * @access          Private
  */
-// eslint-disable-next-line consistent-return
 exports.createActivity = async (req, res, next) => {
   const { user } = req;
   // eslint-disable-next-line no-underscore-dangle
