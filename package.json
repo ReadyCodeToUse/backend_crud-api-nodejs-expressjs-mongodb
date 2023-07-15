@@ -12,7 +12,9 @@
     "start": "nodemon app.js",
     "lint": "eslint",
     "lint-fix": "eslint --fix --ext .js,.jsx .",
-    "release": "release-it"
+    "release": "release-it",
+    "danger-local": "danger pr",
+    "danger": "danger ci"
   },
   "author": "Andrea Ioele",
   "dependencies": {
