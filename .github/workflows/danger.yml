@@ -3,7 +3,7 @@ name: Danger
 on:
   pull_request:
     branches:
-      - master
+      - danger-test
 
 jobs:
   build:
