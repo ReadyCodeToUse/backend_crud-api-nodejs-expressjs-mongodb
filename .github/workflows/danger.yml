@@ -3,7 +3,10 @@ name: Danger
 on:
   pull_request:
     branches:
-      - danger-test
+      - stage
+      - preprod
+      - prod
+      - develop
 
 jobs:
   build:
