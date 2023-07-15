@@ -5,4 +5,4 @@ const prTitle = danger.github.pr.title;
 if (!prTitle.match(regExpConst)) {
   fail(`${prTitle} is not allowed. Please follow the format EA-00 - Text`);
 }
-// comment
+// comment test
