@@ -51,9 +51,10 @@ app.get('/', (req, res) => {
 });
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is runnign on port: ${process.env.SERVER_PORT}`);
-  connectDB();
+  if (process.env.TEST_MODE !== 'true') {
+    connectDB();
+  }
 });
-
 const options = {
   definition: {
     openapi: '3.0.3',
@@ -98,3 +99,5 @@ app.use(
   swaggerUi.setup(specs),
 );
 console.log(`Swagger docs available at http://localhost:${process.env.SERVER_PORT}${apiDocs}`);
+
+module.exports = app;
