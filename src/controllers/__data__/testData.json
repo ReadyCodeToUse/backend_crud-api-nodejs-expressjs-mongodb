@@ -1,0 +1,28 @@
+[
+  {
+    "firstName": "Andrea",
+    "lastName": "Ioele",
+    "birthDate": "1997-04-15",
+    "sex": "M",
+    "email": "a.ioele@icloud.com",
+    "loginData": {
+      "username": "andrea.ioele",
+      "password": "$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm",
+      "role": "user"
+    },
+    "address": "Via torino milano"
+  },
+  {
+    "firstName": "Andrea",
+    "lastName": "Ioele",
+    "birthDate": "1997-04-15",
+    "sex": "M",
+    "email": "a.ioele3@icloud.com",
+    "loginData": {
+      "username": "andrea.ioele3",
+      "password": "$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm",
+      "role": "user"
+    },
+    "address": "Via torino milano"
+  }
+]
