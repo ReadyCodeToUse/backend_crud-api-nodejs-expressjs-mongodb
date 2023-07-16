@@ -31,7 +31,6 @@ const router = express.Router({ mergeParams: true });
  *       400:
  *         description: Login failed
  *
- *
  */
 router.route('/all')
   .get(protect, authorize('admin'), getAllUsers);
