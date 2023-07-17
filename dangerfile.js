@@ -13,7 +13,7 @@ const branchRegExp = {
   STAGE: /^[A-Z]{2}-\d{2} - STAGE .+$/,
   PREPROD: /^[A-Z]{2}-\d{2} - PREPROD .+$/,
   DEVELOP: /^[A-Z]{2}-\d{2} - DEVELOP .+$/,
-  PROD: /^[A-Z]{2}-\d{2} - PROD .+$/,
+  PROD: /v\d{1,2}\.\d{1,2}.\d{1,2}/,
   GLOBAL: /^[A-Z]{2}-\d{2} - .+$/,
 };
 
@@ -37,6 +37,12 @@ switch (prBaseRef) {
     // regex for develop branch
     if (!prTitle.match(branchRegExp.DEVELOP)) {
       fail(`${prTitle} is not allowed when PR on ${branchName.DEVELOP} branch. Please follow the format EA-00 - STAGE <<anyText>>`);
+    }
+    break;
+  case branchName.PROD:
+    // regex for prod branch
+    if (!prTitle.match(branchRegExp.PROD)) {
+      fail(`${prTitle} is not allowed when PR on ${branchName.PROD} branch. Please follow the format v.00.00.00`);
     }
     break;
   default:
