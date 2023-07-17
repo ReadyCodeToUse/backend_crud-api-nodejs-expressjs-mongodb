@@ -20,4 +20,4 @@ jobs:
           GEOCODER_API_KEY: ${{ secrets.GEOCODER_API_KEY }}
           GEOCODER_PROVIDER: ${{ secrets.GEOCODER_PROVIDER }}
           TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-          TOKEN_KEY_EXPIRED: ${{ secrets.TOKEN_KEY_EXPIRED }
+          TOKEN_KEY_EXPIRED: ${{ secrets.TOKEN_KEY_EXPIRED }}
