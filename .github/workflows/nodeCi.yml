@@ -1,26 +1,18 @@
-name: Node-CI
-
+name: Node.js CI
 on:
   pull_request:
     branches: [ "stage", "preprod", "develop", "prod" ]
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: 14.x
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          node-version: '14.x'
       - run: npm install
       - run: npm test
         env:
@@ -28,7 +20,4 @@ jobs:
           GEOCODER_API_KEY: ${{ secrets.GEOCODER_API_KEY }}
           GEOCODER_PROVIDER: ${{ secrets.GEOCODER_PROVIDER }}
           TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-          TOKEN_KEY_EXPIRED: ${{ secrets.TOKEN_KEY_EXPIRED }}
-
-
-
+          TOKEN_KEY_EXPIRED: ${{ secrets.TOKEN_KEY_EXPIRED }
