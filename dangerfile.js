@@ -18,7 +18,7 @@ const branchRegExp = {
 };
 
 const prTitle = danger.github.pr.title;
-const prBaseRef = danger.github.pr.base;
+const prBaseRef = danger.github.pr.base.ref;
 
 switch (prBaseRef) {
   case branchName.STAGE:
