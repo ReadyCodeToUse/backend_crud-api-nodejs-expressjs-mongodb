@@ -1,6 +1,5 @@
 const {
   danger, fail,
-  message,
 } = require('danger');
 
 const branchName = {
@@ -30,9 +29,7 @@ switch (prBaseRef) {
     break;
   case branchName.PREPROD:
     // regex for preprod branch
-    message(prTitle);
     if (!prTitle.match(branchRegExp.PREPROD)) {
-      message(`${prTitle.match(branchRegExp.PREPROD)}`);
       fail(`${prTitle} is not allowed when PR on ${branchName.PREPROD} branch. Please follow the format EA-00 - PREPROD <<anyText>>`);
     }
     break;
