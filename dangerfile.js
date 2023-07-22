@@ -10,15 +10,15 @@ const branchName = {
 };
 
 const branchRegExp = {
-  STAGE: /^[A-Z]{2}-\d{2} - STAGE .+$/,
-  PREPROD: /^[A-Z]{2}-\d{2} - PREPROD .+$/,
-  DEVELOP: /^[A-Z]{2}-\d{2} - DEVELOP .+$/,
+  STAGE: /^[A-Z]{2}-\d{2} - STAGE /,
+  PREPROD: /^[A-Z]{2}-\d{2} - PREPROD /,
+  DEVELOP: /^[A-Z]{2}-\d{2} - DEVELOP /,
   PROD: /v\d{1,2}\.\d{1,2}.\d{1,2}/,
-  GLOBAL: /^[A-Z]{2}-\d{2} - .+$/,
+  GLOBAL: /^[A-Z]{2}-\d{2} - /,
 };
 
 const prTitle = danger.github.pr.title;
-const prBaseRef = danger.github.pr.base;
+const prBaseRef = danger.github.pr.base.ref;
 
 switch (prBaseRef) {
   case branchName.STAGE:
