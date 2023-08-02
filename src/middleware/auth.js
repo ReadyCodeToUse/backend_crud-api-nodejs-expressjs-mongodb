@@ -3,13 +3,13 @@ const moment = require('moment');
 const { User } = require('../models/User.model');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../../utils/errorResponse');
-const { generateRandomReqId } = require('../../utils/generateRandomId');
+const { generateRandomId } = require('../../utils/generateRandomId');
 
 const config = process.env;
 
 exports.protect = asyncHandler(async (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
-  req.reqId = generateRandomReqId();
+  req.reqId = generateRandomId();
 
   if (!token) {
     const body = {
