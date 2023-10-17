@@ -6,6 +6,7 @@ const request = supertest(app);
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const testUtils = require('../../../utils/testUtils');
+const testData = require('../__data__/auth.testData.json');
 
 let mongoServer = null;
 
@@ -17,7 +18,7 @@ describe('Auth Endpoint', () => {
 
   afterAll(async () => testUtils.afterAll(mongoServer, mongoose));
 
-  beforeEach(async () => testUtils.beforeEach());
+  beforeEach(async () => testUtils.beforeEach(testData));
 
   afterEach(async () => testUtils.afterEach());
 
@@ -45,7 +46,6 @@ describe('Auth Endpoint', () => {
       expect(response.body)
         .toEqual(expectedResponse);
     });
-
     it('Should not login a user with wrong credentials', async () => {
       const expectedResponse = {
         reqId: expect.any(String),
@@ -65,7 +65,6 @@ describe('Auth Endpoint', () => {
       expect(response.body)
         .toEqual(expectedResponse);
     });
-
     it('Should ignore additional body property', async () => {
       const expectedResponse = {
         reqId: expect.any(String),
@@ -149,13 +148,12 @@ describe('Auth Endpoint', () => {
           httpOnly: true,
         },
       };
-
       const response = await request
         .post('/auth/register')
         .send(testUser);
 
       expect(response.body).toEqual(expectedResponse);
-    });
+    }, 10000);
     it('Should not register a user with missing required property', async () => {
       const testUser = {
         firstName: 'Andrea',
@@ -222,6 +220,86 @@ describe('Auth Endpoint', () => {
         .send(testUser);
 
       expect(response.body).toEqual(expectedResponse);
-    });
+    }, 20000);
+    it('Should ignore additional body property', async () => {
+      const testUser = {
+        firstName: 'Andrea',
+        lastName: 'Ioele',
+        birthDate: '1997-04-15',
+        sex: 'M',
+        email: 'a.ioele2@icloud.com',
+        firstIgnore: 'test',
+        loginData: {
+          username: 'andrea.ioele2',
+          password: 'password',
+          role: 'user',
+          secondIgnore: 'test',
+        },
+        address: 'Via torino milano',
+      };
+      const expectedResponse = {
+        timestamp: expect.any(String),
+        reqId: expect.any(String),
+        method: 'POST',
+        path: '/auth/register',
+        status: 200,
+        message: 'User Registered',
+        data: {
+          token: expect.any(String),
+          expires: '2h',
+          httpOnly: true,
+        },
+      };
+      const response = await request
+        .post('/auth/register')
+        .send(testUser);
+
+      expect(response.body).toEqual(expectedResponse);
+    }, 20000);
+  });
+  describe('POST /auth/me', () => {
+    it('Should return current user logged in', async () => {
+      const loginResponse = await request
+        .post('/auth/login')
+        .send({
+          email: 'a.ioele@icloud.com',
+          password: 'password',
+        });
+
+      const meResponse = await request
+        .get('/auth/me')
+        .set('x-access-token', loginResponse.body.data.token);
+
+      const expectedResponse = {
+
+        message: 'User correctly retrieved',
+        method: 'GET',
+        path: '/auth/me',
+        reqId: expect.any(String),
+        status: 200,
+        timestamp: expect.any(String),
+        data: {
+          _id: expect.any(String),
+          firstName: 'andrea',
+          lastName: 'ioele',
+          birthDate: '1997-04-15',
+          sex: 'M',
+          email: 'a.ioele@icloud.com',
+          loginData: {
+            username: 'andrea.ioele',
+            password: '$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm',
+            role: 'user',
+          },
+          address: 'Via torino milano',
+          __v: 0,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          fullName: 'andrea ioele',
+          id: expect.any(String),
+        },
+
+      };
+      expect(meResponse.body).toEqual(expectedResponse);
+    }, 10000);
   });
 });
