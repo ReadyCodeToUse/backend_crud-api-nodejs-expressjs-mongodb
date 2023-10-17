@@ -1,7 +1,22 @@
+// eslint-disable-next-line import/no-unresolved
 const { User } = require('../src/models/User.model');
-const testData = require('../src/controllers/__data__/testData.json');
 
-module.exports.beforeEach = async function () {
+module.exports.beforeEach = async function (testData) {
+  // const address = testData[0].address;
+  // eslint-disable-next-line no-return-assign
+  const myFunc = jest.fn(() => this.location = {
+    type: 'Point',
+    coordinates: ['1234', '1234'],
+    formattedAddress: 'address',
+    street: 'street',
+    city: 'city',
+    state: 'state',
+    zipcode: 'zipcode',
+    country: 'country',
+  });
+  User.schema.pre('save', myFunc);
+  // await test(nextSpy);
+  // sinon.assertTrue(nextSpy.called);
   await User.insertMany(testData);
 };
 

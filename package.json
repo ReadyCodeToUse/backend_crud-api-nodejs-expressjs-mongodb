@@ -42,6 +42,7 @@
     "mongoose": "^7.0.1",
     "node-geocoder": "^4.2.0",
     "nodemon": "^2.0.21",
+    "sinon": "^15.2.0",
     "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2",
