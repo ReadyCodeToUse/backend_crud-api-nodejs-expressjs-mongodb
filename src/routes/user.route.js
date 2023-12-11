@@ -2,6 +2,7 @@ const express = require('express');
 const {
   getAllUsers,
   updateCurrentUserData,
+  setInactiveUser,
 } = require('../controllers/user.controller');
 
 const { protect, authorize } = require('../middleware/auth');
@@ -88,5 +89,43 @@ router.route('/all')
  */
 router.route('/update')
   .put(protect, updateCurrentUserData);
+
+/**
+ * @swagger
+ * /user/setInactive:
+ *   patch:
+ *     security:
+ *       - Authentication: []
+ *     summary: Update Current User active status
+ *     tags:
+ *       - User
+ *     description: Update Current User active status
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           required: true
+ *           description: JWT access token
+ *           schema:
+ *             type: string
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                isActive:
+ *                  type: boolean
+ *                  description: The new status of the account
+ *     responses:
+ *       200:
+ *         description: Success. Current User updated
+ *       400:
+ *         description: User not updated
+ *
+ *
+ */
+router.route('/setInactive')
+  .patch(protect, setInactiveUser);
 
 module.exports = router;
