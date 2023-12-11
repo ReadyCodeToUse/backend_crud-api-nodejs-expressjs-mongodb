@@ -58,3 +58,19 @@ exports.updateCurrentUserData = async (req, res, next) => {
     next(error);
   });
 };
+
+exports.setInactiveUser = async (req, res, next) => {
+  const userId = req.user._id.toString();
+
+  const fieldToUpdate = {
+    'loginData.isActive': false,
+  };
+
+  User.findByIdAndUpdate({
+    _id: userId,
+  }, fieldToUpdate, { new: true }).then((user) => {
+    successResponse(req, res, null, 'User setted inactive correctly', user);
+  }, (error) => {
+    next(error);
+  });
+};

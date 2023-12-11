@@ -8,7 +8,8 @@
     "loginData": {
       "username": "andrea.ioele",
       "password": "$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm",
-      "role": "user"
+      "role": "user",
+      "isActive": "true"
     },
     "address": "Via torino milano"
   },
@@ -21,7 +22,8 @@
     "loginData": {
       "username": "andrea.ioele3",
       "password": "$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm",
-      "role": "user"
+      "role": "user",
+      "isActive": "false"
     },
     "address": "Via torino milano"
   }
