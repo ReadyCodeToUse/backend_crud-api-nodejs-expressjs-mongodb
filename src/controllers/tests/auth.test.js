@@ -289,6 +289,7 @@ describe('Auth Endpoint', () => {
             username: 'andrea.ioele',
             password: '$2a$10$dO93GIzceGK4kvCCEiqQWeSdCVCjzoBgL4orPp.w.VDOkuL0R8GDm',
             role: 'user',
+            isActive: 'true',
           },
           address: 'Via torino milano',
           __v: 0,
